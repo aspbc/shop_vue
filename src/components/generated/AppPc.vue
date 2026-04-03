@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <span>PC 配置</span>
-          <el-button type="primary" @click="handleAdd">添加PC 配置</el-button>
+          
         </div>
       </template>
       <el-form :inline="true" class="demo-form-inline">
@@ -17,6 +17,7 @@
         </el-form-item>
       </el-form>
       <div style="margin-bottom: 15px;">
+        <el-button type="primary" plain @click="handleAdd">添加PC 配置</el-button>
         <el-button type="primary" plain @click="handleAdd">新增</el-button>
         <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
         <el-button type="warning" plain @click="handleExport">导出数据</el-button>

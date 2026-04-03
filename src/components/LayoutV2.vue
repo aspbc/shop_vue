@@ -2777,7 +2777,7 @@ watch(
     if (newPath === '/' || newPath === '/login') return;
     
     // 1. Update Tags View
-    const title = routeMetaMap[newPath]?.title || newPath.split('/').pop() || '首页'
+    const title = routeMetaMap[newPath]?.title || routeMetaMap[newPath.replace('/', '/_')]?.title || newPath.split('/').pop() || '首页'
     const existing = visitedViews.value.find(v => v.path === newPath)
     if (!existing) {
       visitedViews.value.push({ path: newPath, title })
@@ -2785,7 +2785,7 @@ watch(
     activeTab.value = newPath
 
     // 2. Update Top Menu
-    const topMenu = routeMetaMap[newPath]?.topMenu
+    const topMenu = routeMetaMap[newPath]?.topMenu || routeMetaMap[newPath.replace('/', '/_')]?.topMenu
     if (topMenu && topMenu !== activeTopMenu.value) {
       activeTopMenu.value = topMenu
     }
