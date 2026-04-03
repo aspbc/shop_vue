@@ -1,21 +1,19 @@
 <template>
   <div class="category-params-container">
-    <el-card shadow="never" class="box-card" :body-style="{ padding: '0' }">
-      <div class="tabs-header">
-        <el-tabs v-model="activeTab" class="custom-tabs" @tab-click="handleTabClick">
-          <el-tab-pane label="商品品牌" name="brand"></el-tab-pane>
-          <el-tab-pane label="商品单位" name="unit"></el-tab-pane>
-          <el-tab-pane label="商品参数" name="specs"></el-tab-pane>
-          <el-tab-pane label="保障服务" name="ensure"></el-tab-pane>
-        </el-tabs>
-      </div>
-      <div class="tabs-content">
-        <ProductProductBrand v-if="activeTab === 'brand'" />
-        <ProductUnitlist v-if="activeTab === 'unit'" />
-        <ProductSpecs v-if="activeTab === 'specs'" />
-        <ProductEnsureCreate v-if="activeTab === 'ensure'" />
-      </div>
-    </el-card>
+    <el-tabs v-model="activeName" class="top-tabs" @tab-click="handleClick">
+      <el-tab-pane label="商品品牌" name="brand">
+        <ProductProductBrand v-if="activeName === 'brand'" />
+      </el-tab-pane>
+      <el-tab-pane label="商品单位" name="unit">
+        <ProductUnitlist v-if="activeName === 'unit'" />
+      </el-tab-pane>
+      <el-tab-pane label="商品参数" name="specs">
+        <ProductSpecs v-if="activeName === 'specs'" />
+      </el-tab-pane>
+      <el-tab-pane label="保障服务" name="ensure">
+        <ProductEnsureCreate v-if="activeName === 'ensure'" />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -26,38 +24,32 @@ import ProductUnitlist from './ProductUnitlist.vue'
 import ProductSpecs from './ProductSpecs.vue'
 import ProductEnsureCreate from './ProductEnsureCreate.vue'
 
-const activeTab = ref('brand')
+const activeName = ref('brand')
 
-const handleTabClick = (tab) => {
-  // 
+const handleClick = (tab, event) => {
+  // tab switched
 }
 </script>
 
 <style scoped>
 .category-params-container {
-  padding: 10px;
-}
-.box-card {
+  padding: 0;
+  background: #fff;
   min-height: calc(100vh - 120px);
 }
-.tabs-header {
-  padding: 0 20px;
-  border-bottom: 1px solid #e4e7ed;
-  background: #fff;
+.top-tabs {
+  padding: 15px 20px 0;
 }
 :deep(.el-tabs__header) {
-  margin: 0;
-  border-bottom: none;
+  margin-bottom: 0;
 }
-.tabs-content {
-  padding: 0px;
+:deep(.el-tabs__nav-wrap::after) {
+  height: 1px;
+  background-color: #e4e7ed;
 }
-/* Hide the inner card headers of the embedded components since we have tabs now */
-:deep(.el-card__header) {
-  display: none !important;
-}
-:deep(.el-card) {
-  border: none !important;
-  box-shadow: none !important;
+:deep(.el-tab-pane) {
+  padding: 20px;
+  background-color: #f5f7f9;
+  min-height: calc(100vh - 170px);
 }
 </style>

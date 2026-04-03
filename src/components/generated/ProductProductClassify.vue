@@ -1,12 +1,6 @@
 <template>
   <div>
     <el-card>
-      <template #header>
-        <div class="card-header">
-          <span>商品分类</span>
-          
-        </div>
-      </template>
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="关键字">
           <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>

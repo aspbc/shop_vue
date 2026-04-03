@@ -101,28 +101,10 @@
       <el-icon><Goods /></el-icon>
       <span>商品标签</span>
     </el-menu-item>
-    <el-sub-menu index="/product_product_brand">
-      <template #title>
-        <el-icon><Management /></el-icon>
-        <span>类目参数</span>
-      </template>
-      <el-menu-item index="/product_product_brand">
-        <el-icon><Goods /></el-icon>
-        <span>商品品牌</span>
-      </el-menu-item>
-      <el-menu-item index="/product_unitList">
-        <el-icon><Goods /></el-icon>
-        <span>商品单位</span>
-      </el-menu-item>
-      <el-menu-item index="/product_specs">
-        <el-icon><Goods /></el-icon>
-        <span>商品参数</span>
-      </el-menu-item>
-      <el-menu-item index="/product_ensure">
-        <el-icon><CreditCard /></el-icon>
-        <span>保障服务</span>
-        </el-menu-item>
-    </el-sub-menu>
+    <el-menu-item index="/product_category_params">
+      <el-icon><Management /></el-icon>
+      <span>类目参数</span>
+    </el-menu-item>
     <el-menu-item index="/setting_system_create">
       <el-icon><OfficeBuilding /></el-icon>
       <span>系统表单</span>
@@ -1256,124 +1238,36 @@ const routeMetaMap = {
     "title": "首页",
     "topMenu": "商城"
   },
+  "/_product_category_params": {
+    "title": "类目参数",
+    "topMenu": "商城"
+  },
   "/_product": {
-    "title": "商品",
+    "title": "商城",
+    "topMenu": "商城"
+  },
+  "/_home_": {
+    "title": "首页",
     "topMenu": "商城"
   },
   "/_product_product_list": {
     "title": "商品列表",
     "topMenu": "商城"
   },
-  "/_product_product": {
-    "title": "产品列表",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_type_header": {
-    "title": "商品列表头部",
-    "topMenu": "商城"
-  },
-  "/_admin*": {
-    "title": "附加权限",
-    "topMenu": "设置"
-  },
-  "/_adminproduct_set_show_<id>_<is_show>": {
-    "title": "产品状态",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_set_product_<id>": {
-    "title": "快速编辑",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_product_show": {
-    "title": "批量上架商品",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_crawl": {
-    "title": "采集商品",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_crawl_save": {
-    "title": "采集商品保存",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_list": {
-    "title": "商品列表插件",
-    "topMenu": "商城"
-  },
-  "/product_product_product_show": {
-    "title": "批量设置",
-    "topMenu": "商城"
-  },
   "/_product_product_classify": {
     "title": "商品分类",
     "topMenu": "商城"
   },
-  "/_adminproduct_category": {
-    "title": "新增分类",
-    "topMenu": "商城"
-  },
-  "/_admincategory_tree_:type": {
-    "title": "分类树形列表",
-    "topMenu": "商城"
-  },
   "/_adminproduct_category_<id>": {
-    "title": "修改分类",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_category_set_show_<id>_<is_show>": {
-    "title": "分类状态",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_category_set_category_<id>": {
-    "title": "快速编辑",
-    "topMenu": "商城"
-  },
-  "/_admincategory_create": {
-    "title": "分类表单添加",
-    "topMenu": "商城"
-  },
-  "/_admincategory_<id>_edit": {
-    "title": "分类表单编辑",
+    "title": "删除分类",
     "topMenu": "商城"
   },
   "/_product_add_product": {
     "title": "产品添加",
     "topMenu": "商城"
   },
-  "/_product_save": {
-    "title": "添加产品保存",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_get_rule": {
-    "title": "获取属性模板列表",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_get_template": {
-    "title": "运费模板列表",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_generate_attr_<id>": {
-    "title": "生成属性",
-    "topMenu": "商城"
-  },
   "/_product_product_attr": {
     "title": "商品规格",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_rule": {
-    "title": "属性规则列表",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_rule_<id>": {
-    "title": "保存修改规则",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_rule_<id>": {
-    "title": "规则详情",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_product_rule_delete": {
-    "title": "删除规则",
     "topMenu": "商城"
   },
   "/_product_label": {
@@ -1381,7 +1275,7 @@ const routeMetaMap = {
     "topMenu": "商城"
   },
   "/_product_product_brand": {
-    "title": "商品品牌",
+    "title": "类目参数",
     "topMenu": "商城"
   },
   "/_product_unitList": {
@@ -1416,26 +1310,6 @@ const routeMetaMap = {
     "title": "商品评论",
     "topMenu": "商城"
   },
-  "/_adminproduct_reply": {
-    "title": "评论列表",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_reply_fictitious_reply": {
-    "title": "虚拟评论表单",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_reply_save_fictitious_reply": {
-    "title": "保存虚拟评论",
-    "topMenu": "商城"
-  },
-  "/_adminproduct_reply_<id>": {
-    "title": "删除评论",
-    "topMenu": "商城"
-  },
-  "/_adminreply_set_reply_<id>": {
-    "title": "评论回复",
-    "topMenu": "商城"
-  },
   "/_product_product_reply_config": {
     "title": "评论设置",
     "topMenu": "商城"
@@ -1452,101 +1326,17 @@ const routeMetaMap = {
     "title": "订单列表",
     "topMenu": "商城"
   },
-  "/_adminorder_chart": {
-    "title": "订单数据",
-    "topMenu": "商城"
-  },
-  "/_adminorder_write": {
-    "title": "订单核销",
-    "topMenu": "商城"
-  },
-  "/_adminorder_take_<id>": {
-    "title": "订单收货",
-    "topMenu": "商城"
-  },
-  "/_adminorder_express_<id>": {
-    "title": "订单物流信息",
-    "topMenu": "商城"
-  },
-  "/_adminorder_delivery": {
-    "title": "发货",
-    "topMenu": "商城"
-  },
-  "/_adminorder_delivery_<id>": {
-    "title": "订单发货",
-    "topMenu": "商城"
-  },
-  "/_adminorder_express_list": {
-    "title": "物流公司列表",
-    "topMenu": "商城"
-  },
-  "/_adminorder_distribution": {
-    "title": "订单配送",
-    "topMenu": "商城"
-  },
-  "/_adminorder_distribution_<id>": {
-    "title": "修改配送信息",
-    "topMenu": "商城"
-  },
-  "/_adminorder_refund": {
-    "title": "退款",
-    "topMenu": "商城"
-  },
-  "/_adminorder_refund_<id>": {
-    "title": "订单退款",
-    "topMenu": "商城"
-  },
-  "/_adminorder_update": {
-    "title": "修改",
-    "topMenu": "商城"
-  },
-  "/_adminorder_edit_<id>": {
-    "title": "订单修改表格",
-    "topMenu": "商城"
-  },
-  "/_adminorder_update_<id>": {
-    "title": "订单修改",
-    "topMenu": "商城"
-  },
-  "/_adminorder_no_refund": {
-    "title": "不退款",
-    "topMenu": "商城"
-  },
-  "/_adminorder_no_refund_<id>": {
-    "title": "不退款理由修改",
-    "topMenu": "商城"
-  },
-  "/_adminorder_refund_integral": {
-    "title": "退积分",
-    "topMenu": "商城"
-  },
-  "/order_dels": {
-    "title": "订单号核销",
-    "topMenu": "商城"
-  },
-  "/_order_split_delivery": {
-    "title": "拆单发货",
-    "topMenu": "商城"
-  },
-  "/queue_stop_wrong_queue_<id>": {
-    "title": "停止任务",
-    "topMenu": "商城"
-  },
-  "/_order_split_list": {
-    "title": "子订单列表",
-    "topMenu": "商城"
-  },
   "/_order_refund": {
     "title": "售后订单",
     "topMenu": "商城"
   },
   "/_setting_distribution_deliver": {
-    "title": "发货设置",
+    "title": "发货",
     "topMenu": "商城"
   },
   "/_setting_freight_shipping_templates_list": {
     "title": "运费模板",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_freight_express_index": {
     "title": "物流公司",
@@ -1554,14 +1344,6 @@ const routeMetaMap = {
   },
   "/_setting_delivery_service_index": {
     "title": "配送员管理",
-    "topMenu": "商城"
-  },
-  "/_setting_delivery_service_edit": {
-    "title": "编辑配送员",
-    "topMenu": "商城"
-  },
-  "/_setting_delivery_service_add": {
-    "title": "添加配送员",
     "topMenu": "商城"
   },
   "/_setting_shop_storeList": {
@@ -1578,39 +1360,35 @@ const routeMetaMap = {
   },
   "/_setting_freight_city_list": {
     "title": "城市数据",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop": {
     "title": "商城设置",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop_product": {
     "title": "商品设置",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop_trade": {
     "title": "交易设置",
-    "topMenu": "商城"
-  },
-  "/_setting_city_delivery": {
-    "title": "同城配送",
-    "topMenu": "商城"
-  },
-  "/_setting_shop_distribution": {
-    "title": "配送设置",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop_agreemant": {
     "title": "政策协议",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop_releaseset": {
     "title": "释放比例设置",
-    "topMenu": "商城"
+    "topMenu": "设置"
   },
   "/_setting_shop_coinoffset": {
     "title": "屏蔽前端代币设置",
-    "topMenu": "商城"
+    "topMenu": "设置"
+  },
+  "/_user": {
+    "title": "用户",
+    "topMenu": "用户"
   },
   "/_statistic_user": {
     "title": "用户概况",
@@ -1624,36 +1402,8 @@ const routeMetaMap = {
     "title": "用户列表",
     "topMenu": "用户"
   },
-  "/_user_coupon": {
-    "title": "发送优惠卷",
-    "topMenu": "用户"
-  },
-  "/_wechat_news_": {
-    "title": "发送图文",
-    "topMenu": "用户"
-  },
-  "/_user_group_set_": {
-    "title": "批量用户分组",
-    "topMenu": "用户"
-  },
-  "/_user_set_label": {
-    "title": "批量设置标签",
-    "topMenu": "用户"
-  },
-  "/_user_edit_other": {
-    "title": "积分余额",
-    "topMenu": "用户"
-  },
-  "/_user_user_level": {
-    "title": "等级任务",
-    "topMenu": "用户"
-  },
-  "/_user_save": {
-    "title": "添加用户",
-    "topMenu": "用户"
-  },
   "/_user_group": {
-    "title": "添加修改用户分组",
+    "title": "用户分组",
     "topMenu": "用户"
   },
   "/_user_label": {
@@ -1662,26 +1412,6 @@ const routeMetaMap = {
   },
   "/_user_label_create": {
     "title": "添加标签",
-    "topMenu": "用户"
-  },
-  "/_user_label_add": {
-    "title": "添加修改用户标签",
-    "topMenu": "用户"
-  },
-  "/_user_label_cate": {
-    "title": "标签分类",
-    "topMenu": "用户"
-  },
-  "/_user_label_cate_add": {
-    "title": "添加标签分类",
-    "topMenu": "用户"
-  },
-  "/_user_label_cate_edit": {
-    "title": "修改标签分类",
-    "topMenu": "用户"
-  },
-  "/user_user_label_cate_<id>_edit": {
-    "title": "获取修改标签分类表单",
     "topMenu": "用户"
   },
   "/_marketing_channel_code": {
@@ -1696,16 +1426,8 @@ const routeMetaMap = {
     "title": "用户设置",
     "topMenu": "用户"
   },
-  "/_user": {
-    "title": "用户运营",
-    "topMenu": "用户"
-  },
   "/_vipuser_level_list": {
     "title": "用户等级",
-    "topMenu": "用户"
-  },
-  "/_user_level_add": {
-    "title": "添加修改用户等级",
     "topMenu": "用户"
   },
   "/_user_levelSet": {
@@ -1722,26 +1444,22 @@ const routeMetaMap = {
   },
   "/_marketing_store_coupon": {
     "title": "优惠券",
-    "topMenu": "营销"
+    "topMenu": "用户"
   },
   "/_marketing_store_coupon_issue_index": {
     "title": "优惠券列表",
-    "topMenu": "用户"
+    "topMenu": "营销"
   },
   "/_marketing_store_coupon_issue_create": {
     "title": "添加优惠卷",
-    "topMenu": "用户"
-  },
-  "/marketing_coupon_copy_369": {
-    "title": "复制优惠券",
-    "topMenu": "用户"
+    "topMenu": "营销"
   },
   "/_marketing_store_coupon_user_index": {
     "title": "领取记录",
-    "topMenu": "用户"
+    "topMenu": "营销"
   },
   "/_marketing_integral_system_config_3_11": {
-    "title": "积分配置",
+    "title": "资产",
     "topMenu": "用户"
   },
   "/_marketing_integral_system_config": {
@@ -1750,17 +1468,13 @@ const routeMetaMap = {
   },
   "/_marketing_user_point_index": {
     "title": "积分日志",
-    "topMenu": "用户"
+    "topMenu": "营销"
   },
   "/_marketing_balance_recharge": {
     "title": "代币金额",
     "topMenu": "用户"
   },
-  "/_marketing_setup_recharge": {
-    "title": "代币设置",
-    "topMenu": "用户"
-  },
-  "/integral_release_index": {
+  "/_integral_release_index": {
     "title": "积分释放配置",
     "topMenu": "用户"
   },
@@ -1774,87 +1488,91 @@ const routeMetaMap = {
   },
   "/_work": {
     "title": "企业微信",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_list": {
-    "title": "客户列表",
-    "topMenu": "用户"
+    "title": "客户管理",
+    "topMenu": "商城"
   },
   "/_work_channel_code": {
     "title": "企微渠道码",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_welcome": {
     "title": "欢迎语",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_createCode": {
     "title": "添加企业渠道码",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_addWelcome": {
     "title": "新建好友欢迎语",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_group": {
     "title": "客户群发",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_add_group": {
     "title": "添加客户群发",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_add_moment": {
     "title": "朋友圈添加",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_moment": {
     "title": "朋友圈列表",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_group_info": {
     "title": "客户群发详情",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_moment_info": {
     "title": "朋友圈详情",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_group_chat": {
-    "title": "客户群列表",
-    "topMenu": "用户"
+    "title": "客户群运营",
+    "topMenu": "商城"
   },
   "/_work_auth_group": {
     "title": "自动拉群",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_addAuthGroup": {
     "title": "新建自动拉群",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_client_statistical": {
     "title": "客户群统计",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_group_template": {
     "title": "客户群群发",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_group_add_template": {
     "title": "添加客户群群发",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_group_template_info": {
     "title": "客户群群发详情",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_work_staffList": {
     "title": "员工列表",
-    "topMenu": "用户"
+    "topMenu": "商城"
   },
   "/_user_importRecord": {
     "title": "用户导入记录",
     "topMenu": "用户"
+  },
+  "/_marketing": {
+    "title": "营销",
+    "topMenu": "营销"
   },
   "/_marketing_home": {
     "title": "营销中心",
@@ -1892,16 +1610,8 @@ const routeMetaMap = {
     "title": "会员设置",
     "topMenu": "营销"
   },
-  "/_marketing_store_coupon_index": {
-    "title": "优惠券模板",
-    "topMenu": "营销"
-  },
   "/_marketing_store_coupon_add": {
     "title": "添加优惠卷",
-    "topMenu": "营销"
-  },
-  "/_marketing_store_coupon_push": {
-    "title": "发布优惠卷",
     "topMenu": "营销"
   },
   "/_marketing_lottery_index": {
@@ -1974,14 +1684,6 @@ const routeMetaMap = {
   },
   "/_marketing_store_bargain_index": {
     "title": "砍价商品",
-    "topMenu": "营销"
-  },
-  "/_marketing_store_bargain_attr": {
-    "title": "附加权限",
-    "topMenu": "营销"
-  },
-  "/_marketing_store_bargain_public": {
-    "title": "公共权限",
     "topMenu": "营销"
   },
   "/_marketing_store_bargain_create": {
@@ -2096,7 +1798,7 @@ const routeMetaMap = {
     "title": "添加积分商品",
     "topMenu": "营销"
   },
-  "/_pages_marketing_store_integral_add_store_integral": {
+  "/_marketing_store_integral_add_store_integral": {
     "title": "批量添加积分商品",
     "topMenu": "营销"
   },
@@ -2117,7 +1819,7 @@ const routeMetaMap = {
     "topMenu": "营销"
   },
   "/_marketing_activity_background": {
-    "title": "活动背景",
+    "title": "活动氛围",
     "topMenu": "营销"
   },
   "/_marketing_activity_frame": {
@@ -2132,8 +1834,12 @@ const routeMetaMap = {
     "title": "添加活动背景",
     "topMenu": "营销"
   },
+  "/_agent": {
+    "title": "分销",
+    "topMenu": "分销"
+  },
   "/_agent_agent_manage_index": {
-    "title": "分销员管理",
+    "title": "分销员",
     "topMenu": "分销"
   },
   "/_setting_membership_level_index": {
@@ -2142,14 +1848,14 @@ const routeMetaMap = {
   },
   "/_finance_finance_commission": {
     "title": "佣金记录",
-    "topMenu": "分销"
+    "topMenu": "财务"
   },
   "/_agent_promoter_apply": {
     "title": "分销员申请",
     "topMenu": "分销"
   },
   "/_setting_system_config_retail_2_9": {
-    "title": "分销模式",
+    "title": "分销配置",
     "topMenu": "分销"
   },
   "/_setting_system_config_rake_back": {
@@ -2189,196 +1895,148 @@ const routeMetaMap = {
     "topMenu": "分销"
   },
   "/_setting_pages": {
-    "title": "店铺装修",
-    "topMenu": "店铺"
+    "title": "店铺",
+    "topMenu": "商城"
   },
   "/_setting_pages_devise": {
     "title": "首页装修",
-    "topMenu": "店铺"
-  },
-  "/_setting_pages_diy": {
-    "title": "页面编辑",
-    "topMenu": "店铺"
-  },
-  "/_setting_diy": {
-    "title": "附加权限",
-    "topMenu": "店铺"
-  },
-  "/_setting_pages_template": {
-    "title": "页面设计",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_setting_theme_style": {
     "title": "主题风格",
-    "topMenu": "店铺"
-  },
-  "/diy_color_change_:status_:type": {
-    "title": "设置主题风格",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_setting_pages_product_category": {
     "title": "商品分类",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_setting_pages_home": {
     "title": "个人中心",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_setting_pages_product_detail": {
     "title": "商品详情",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_setting_pages_fab": {
     "title": "悬浮菜单",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_system_file": {
-    "title": "素材中心",
-    "topMenu": "店铺"
+    "title": "通用组件",
+    "topMenu": "商城"
   },
   "/_setting_system_visualization_data": {
     "title": "开屏广告",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_product_hotWords": {
     "title": "搜索热词",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community": {
     "title": "逛逛社区",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community_topic": {
     "title": "社区话题",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community_content": {
     "title": "社区内容",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community_addContent": {
     "title": "添加社区内容",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community_comment": {
     "title": "社区评论",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_community_setting": {
     "title": "社区设置",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_cms": {
     "title": "内容资讯",
-    "topMenu": "店铺"
+    "topMenu": "营销"
   },
   "/_content_article_category_index": {
     "title": "文章分类",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_article_index": {
     "title": "文章列表",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_content_article_add_article": {
     "title": "文章添加",
-    "topMenu": "店铺"
+    "topMenu": "商城"
   },
   "/_kefu": {
     "title": "客服管理",
-    "topMenu": "店铺"
+    "topMenu": "用户"
   },
   "/_setting_store_service_index": {
     "title": "客服列表",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_edit": {
-    "title": "编辑客服",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_add": {
-    "title": "添加客服",
-    "topMenu": "店铺"
+    "topMenu": "用户"
   },
   "/_setting_store_service_speechcraft": {
     "title": "客服话术",
-    "topMenu": "店铺"
-  },
-  "/*": {
-    "title": "附件权限",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_speechcraft_add": {
-    "title": "添加话术",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_speechcraft_edit": {
-    "title": "编辑话术",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_speechcraft_cate": {
-    "title": "话术分类",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_speechcraft_cate_create": {
-    "title": "添加话术分类",
-    "topMenu": "店铺"
-  },
-  "/_setting_store_service_speechcraft_cate_edit": {
-    "title": "修改话术分类",
-    "topMenu": "店铺"
-  },
-  "/app_wechat_speechcraftcate_<id>_edit": {
-    "title": "获取话术分类表单",
-    "topMenu": "店铺"
+    "topMenu": "用户"
   },
   "/_setting_store_service_feedback": {
     "title": "用户留言",
-    "topMenu": "店铺"
+    "topMenu": "用户"
   },
   "/_kefu_setup": {
     "title": "客服设置",
-    "topMenu": "店铺"
+    "topMenu": "用户"
+  },
+  "/_admin_supplier": {
+    "title": "渠道",
+    "topMenu": "渠道"
   },
   "/_supplier": {
     "title": "供应商",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_menu_list": {
     "title": "供应商列表",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_marketing_channel_code_statistic": {
     "title": "二维码统计",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_apply": {
     "title": "供应商申请",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_orderList_index": {
     "title": "订单列表",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_afterOrder_index": {
     "title": "售后订单",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_orderStatistics_index": {
     "title": "订单统计",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_supplier_index": {
     "title": "菜单设置",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_supplierAdd": {
     "title": "添加供应商",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_supplier_setting": {
     "title": "供应商设置",
-    "topMenu": "渠道"
+    "topMenu": "商城"
   },
   "/_user_channelMerchant": {
     "title": "采购商",
@@ -2400,6 +2058,10 @@ const routeMetaMap = {
     "title": "采购商设置",
     "topMenu": "渠道"
   },
+  "/_finance": {
+    "title": "财务",
+    "topMenu": "财务"
+  },
   "/_finance_user_extract": {
     "title": "财务操作",
     "topMenu": "财务"
@@ -2408,16 +2070,12 @@ const routeMetaMap = {
     "title": "发票列表",
     "topMenu": "财务"
   },
-  "/_adminorder_info_<id>": {
-    "title": "附加权限",
-    "topMenu": "财务"
-  },
   "/_order_invoice_setup": {
     "title": "发票设置",
     "topMenu": "财务"
   },
   "/_finance_user_extract_index": {
-    "title": "提现申请",
+    "title": "分销财务",
     "topMenu": "财务"
   },
   "/_setting_system_config_advance": {
@@ -2452,133 +2110,117 @@ const routeMetaMap = {
     "title": "财务记录",
     "topMenu": "财务"
   },
-  "/_order_offline": {
-    "title": "收款记录",
-    "topMenu": "财务"
-  },
   "/_finance_user_recharge_index": {
     "title": "充值记录",
-    "topMenu": "财务"
-  },
-  "/_finance_finance_bill": {
-    "title": "购买记录",
     "topMenu": "财务"
   },
   "/_statistic_capital": {
     "title": "资金流水",
     "topMenu": "财务"
   },
+  "/_statistic_": {
+    "title": "统计",
+    "topMenu": "商城"
+  },
+  "/_": {
+    "title": "商城统计",
+    "topMenu": "商城"
+  },
   "/_statistic_product": {
     "title": "商品统计",
-    "topMenu": "统计"
+    "topMenu": "商城"
   },
   "/_statistic_transaction": {
     "title": "交易统计",
-    "topMenu": "统计"
+    "topMenu": "商城"
   },
   "/_statistic_order": {
     "title": "订单统计",
-    "topMenu": "统计"
+    "topMenu": "商城"
   },
   "/_statistic_balance": {
     "title": "余额统计",
-    "topMenu": "统计"
+    "topMenu": "商城"
+  },
+  "/_app": {
+    "title": "应用端",
+    "topMenu": "商城"
   },
   "/_app_wechat": {
     "title": "公众号",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_base": {
     "title": "基础配置",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_setting_menus_index": {
     "title": "微信菜单",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_card": {
     "title": "微信会员卡",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_reply": {
     "title": "自动回复",
-    "topMenu": "应用端"
-  },
-  "/_app_wechat_reply_follow_subscribe": {
-    "title": "微信关注回复",
-    "topMenu": "应用端"
-  },
-  "/_app_wechat_reply_keyword": {
-    "title": "关键字回复",
-    "topMenu": "应用端"
-  },
-  "/_app_wechat_reply_index_default": {
-    "title": "无效关键词回复",
-    "topMenu": "应用端"
-  },
-  "/_app_wechat_reply_keyword_save": {
-    "title": "关键字添加",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_news_category_index": {
     "title": "图文管理",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_wechat_news_category_save": {
     "title": "图文添加",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_routine_download": {
-    "title": "小程序下载",
-    "topMenu": "应用端"
+    "title": "小程序",
+    "topMenu": "商城"
   },
   "/_content_live_live_room": {
     "title": "直播间管理",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_content_live_add_live_room": {
     "title": "添加直播间",
-    "topMenu": "应用端"
-  },
-  "/_*": {
-    "title": "附加权限",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_content_live_live_goods": {
     "title": "商品管理",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_content_live_add_live_goods": {
     "title": "添加直播商品",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_content_live_anchor": {
     "title": "主播管理",
-    "topMenu": "应用端"
-  },
-  "/live_anchor_add_<id>": {
-    "title": "添加/修改主播表单",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_pc": {
-    "title": "PC 配置",
-    "topMenu": "应用端"
+    "title": "PC 端",
+    "topMenu": "商城"
   },
   "/_setting_pc_group_data": {
     "title": "PC商城",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_app": {
     "title": "APP",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_app_app_update": {
     "title": "版本管理",
-    "topMenu": "应用端"
+    "topMenu": "商城"
   },
   "/_work_config": {
-    "title": "企微设置",
-    "topMenu": "应用端"
+    "title": "企业微信",
+    "topMenu": "商城"
+  },
+  "/_setting": {
+    "title": "设置",
+    "topMenu": "设置"
   },
   "/_setting_base": {
     "title": "系统设置",
@@ -2624,14 +2266,6 @@ const routeMetaMap = {
     "title": "存储配置",
     "topMenu": "设置"
   },
-  "/_setting_storage_index": {
-    "title": "存储设置",
-    "topMenu": "设置"
-  },
-  "/_setting_storage_thumbnail": {
-    "title": "缩略图设置",
-    "topMenu": "设置"
-  },
   "/_setting_document_content": {
     "title": "小票打印",
     "topMenu": "设置"
@@ -2644,36 +2278,12 @@ const routeMetaMap = {
     "title": "角色管理",
     "topMenu": "设置"
   },
-  "/_setting_system_role_add": {
-    "title": "添加身份",
-    "topMenu": "设置"
-  },
   "/_setting_system_admin_index": {
     "title": "管理员列表",
     "topMenu": "设置"
   },
-  "/_setting_system_admin_add": {
-    "title": "添加管理员",
-    "topMenu": "设置"
-  },
-  "/_admin _setting_system_admin_edit": {
-    "title": "编辑管理员",
-    "topMenu": "设置"
-  },
   "/_setting_system_menus_index": {
     "title": "权限规则",
-    "topMenu": "设置"
-  },
-  "/_setting_system_menus_add": {
-    "title": "添加规则",
-    "topMenu": "设置"
-  },
-  "/_setting_system_menus_add_sub": {
-    "title": "添加子菜单",
-    "topMenu": "设置"
-  },
-  "/_setting_system_menus_edit": {
-    "title": "修改权限",
     "topMenu": "设置"
   },
   "/_system_config": {
@@ -2692,10 +2302,6 @@ const routeMetaMap = {
     "title": "配置分类",
     "topMenu": "设置"
   },
-  "/system_config_system_config_tab_edit": {
-    "title": "编辑配置分类",
-    "topMenu": "设置"
-  },
   "/_system_config_system_group_index": {
     "title": "组合数据",
     "topMenu": "设置"
@@ -2709,10 +2315,6 @@ const routeMetaMap = {
     "topMenu": "设置"
   },
   "/_out": {
-    "title": "对外接口",
-    "topMenu": "设置"
-  },
-  "/_setting_other_out_config": {
     "title": "对外接口",
     "topMenu": "设置"
   },
@@ -2748,14 +2350,6 @@ const routeMetaMap = {
     "title": "系统日志",
     "topMenu": "设置"
   },
-  "/_system_system_upgradeclient_index": {
-    "title": "在线升级",
-    "topMenu": "设置"
-  },
-  "/_setting_freight": {
-    "title": "发货设置",
-    "topMenu": "设置"
-  },
   "/_system_user": {
     "title": "个人中心",
     "topMenu": "设置"
@@ -2763,7 +2357,11 @@ const routeMetaMap = {
   "/_system_maintain_auth": {
     "title": "商业授权",
     "topMenu": "设置"
-  }
+  },
+  "/_admin*": {
+    "title": "公共权限",
+    "topMenu": "商城"
+  },
 }
 
 const visitedViews = ref([])
