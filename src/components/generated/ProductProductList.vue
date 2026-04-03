@@ -107,6 +107,7 @@
       <!-- 3. 操作按钮 -->
       <div class="action-bar" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
         <div class="left-actions">
+          <el-button type="primary" @click="handleAdd">添加商品</el-button>
           
           <el-button type="success" @click="handleAction('collect')" plain>商品采集</el-button>
           

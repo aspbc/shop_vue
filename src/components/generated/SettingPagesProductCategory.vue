@@ -18,7 +18,6 @@
       </el-form>
       <div style="margin-bottom: 15px;">
         <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
         <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
         <el-button type="warning" plain @click="handleExport">导出数据</el-button>
       </div>
