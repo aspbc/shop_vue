@@ -119,16 +119,10 @@
           <span>保障服务</span>
         </el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="/setting_system_form">
-      <template #title>
-        <el-icon><OfficeBuilding /></el-icon>
-        <span>系统表单</span>
-      </template>
-      <el-menu-item index="/setting_system_form_data">
-        <el-icon><List /></el-icon>
-        <span>系统表单收集数据</span>
-      </el-menu-item>
-    </el-sub-menu>
+    <el-menu-item index="/setting_system_create">
+      <el-icon><OfficeBuilding /></el-icon>
+      <span>系统表单</span>
+    </el-menu-item>
     <el-menu-item index="/product_product_reply">
       <el-icon><Goods /></el-icon>
       <span>商品评论</span>

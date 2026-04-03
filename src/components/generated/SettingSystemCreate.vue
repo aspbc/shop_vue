@@ -3,7 +3,7 @@
     <el-card>
       <template #header>
         <div class="card-header">
-          <span>添加系统表单</span>
+          <span>系统表单</span>
           
         </div>
       </template>
@@ -35,6 +35,7 @@
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
+            <el-button size="small" type="primary" link @click="$router.push('/setting_system_form_data')">收集数据</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
