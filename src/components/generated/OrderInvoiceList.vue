@@ -1,35 +1,55 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="订单号：">
+          <el-input v-model="searchQuery.keyword" placeholder="订单号/发票抬头" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="开票状态：">
+          <el-select v-model="searchQuery.status" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="待开票" value="0"></el-option>
+            <el-option label="已开票" value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
+            <div style="margin-bottom: 15px;">
+        <el-button type="warning" @click="handleExport">导出开票列表</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column prop="order_id" label="订单号" width="180" align="center" />
+        <el-table-column prop="invoice_type" label="发票类型" width="100" align="center">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <el-tag type="info" size="small">{{ scope.row.invoice_type === 1 ? '电子普票' : '纸质专票' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="header_type" label="抬头类型" width="100" align="center">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+            {{ scope.row.header_type === 1 ? '个人' : '企业' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="header_name" label="发票抬头" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="amount" label="开票金额" width="120" align="center">
+          <template #default="scope">
+            <span style="color: #f56c6c;">￥{{ scope.row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="开票状态" width="100" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.status === 1 ? 'success' : 'warning'" size="small">
+              {{ scope.row.status === 1 ? '已开票' : '待开票' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="申请时间" width="160" align="center" />
+        <el-table-column label="操作" width="120" align="center" fixed="right">
+          <template #default="scope">
+            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">详情</el-button>
+            <el-button size="small" type="success" link v-if="scope.row.status === 0">开票</el-button>
           </template>
         </el-table-column>
       </el-table>

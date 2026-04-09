@@ -1,35 +1,47 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="退款单号：">
+          <el-input v-model="searchQuery.keyword" placeholder="退款单号/原订单号" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="退款状态：">
+          <el-select v-model="searchQuery.status" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="待审核" value="0"></el-option>
+            <el-option label="退款成功" value="1"></el-option>
+            <el-option label="已拒绝" value="-1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
+            <div style="margin-bottom: 15px;">
+        <el-button type="warning" @click="handleExport">批量导出</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column prop="refund_order_sn" label="退款单号" width="180" align="center" />
+        <el-table-column prop="order_id" label="原订单号" width="180" align="center" />
+        <el-table-column prop="user_name" label="用户信息" width="120" align="center" />
+        <el-table-column prop="refund_price" label="退款金额" width="120" align="center">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <span style="color: #f56c6c; font-weight: bold;">￥{{ scope.row.refund_price }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="refund_reason" label="退款原因" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="status_name" label="退款状态" width="120" align="center">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+            <el-tag :type="scope.row.status === 0 ? 'warning' : scope.row.status === 1 ? 'success' : 'danger'" size="small">
+              {{ scope.row.status === 0 ? '待审核' : scope.row.status === 1 ? '退款成功' : '已拒绝' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="申请时间" width="160" align="center" />
+        <el-table-column label="操作" width="150" align="center" fixed="right">
+          <template #default="scope">
+            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">退款详情</el-button>
+            <el-button size="small" type="success" link v-if="scope.row.status === 0">审核</el-button>
           </template>
         </el-table-column>
       </el-table>

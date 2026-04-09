@@ -1,34 +1,50 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="商品信息：">
+          <el-input v-model="searchQuery.keyword" placeholder="商品名称" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="回复状态：">
+          <el-select v-model="searchQuery.is_reply" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="已回复" value="1"></el-option>
+            <el-option label="待回复" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
+            <div style="margin-bottom: 15px;">
         <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column prop="product_info" label="商品信息" min-width="200" align="left">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <div style="display: flex; align-items: center;">
+              <el-image style="width: 40px; height: 40px; margin-right: 10px; border-radius: 4px;" :src="scope.row.image" fit="cover" />
+              <span style="font-size: 12px; line-height: 1.2;">{{ scope.row.store_name }}</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="user_name" label="用户名称" width="120" align="center" />
+        <el-table-column prop="score" label="综合评分" width="150" align="center">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
+            <el-rate v-model="scope.row.score" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+          </template>
+        </el-table-column>
+        <el-table-column prop="comment" label="评价内容" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="is_reply" label="回复状态" width="100" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.is_reply === 1 ? 'success' : 'info'" size="small">{{ scope.row.is_reply === 1 ? '已回复' : '待回复' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="评价时间" width="160" align="center" />
+        <el-table-column label="操作" width="120" align="center" fixed="right">
+          <template #default="scope">
+            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">回复</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
