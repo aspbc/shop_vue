@@ -1,37 +1,48 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="关键字：">
+          <el-input v-model="searchQuery.keyword" placeholder="订单号/用户昵称" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="收支类型：">
+          <el-select v-model="searchQuery.pm" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="收入" value="1"></el-option>
+            <el-option label="支出" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
+            <div style="margin-bottom: 15px;">
+        <el-button type="warning" @click="handleExport">导出资金流水</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column prop="order_id" label="关联单号" width="180" align="center" />
+        <el-table-column prop="user_info" label="用户信息" min-width="150" align="center">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <div style="font-size: 13px;">{{ scope.row.nickname }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="pm" label="收支类型" width="100" align="center">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+            <el-tag :type="scope.row.pm === 1 ? 'success' : 'danger'" size="small">
+              {{ scope.row.pm === 1 ? '收入' : '支出' }}
+            </el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="number" label="金额" width="120" align="center">
+          <template #default="scope">
+            <span :style="{ color: scope.row.pm === 1 ? '#67c23a' : '#f56c6c', fontWeight: 'bold' }">
+              {{ scope.row.pm === 1 ? '+' : '-' }}{{ scope.row.number }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="title" label="明细类型" width="120" align="center" />
+        <el-table-column prop="mark" label="备注" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="create_time" label="发生时间" width="160" align="center" />
       </el-table>
       <div style="margin-top: 20px; text-align: right;">
         <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="total" />

@@ -1,35 +1,45 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="订单搜索：">
+          <el-input v-model="searchQuery.keyword" placeholder="请输入订单号" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="订单状态：">
+          <el-select v-model="searchQuery.status" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="待发货" value="0"></el-option>
+            <el-option label="待收货" value="1"></el-option>
+            <el-option label="交易完成" value="2"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
+            <div style="margin-bottom: 15px;">
+        <el-button type="warning" @click="handleExport">导出订单</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column prop="order_id" label="订单号" width="180" align="center" />
+        <el-table-column prop="supplier_name" label="所属供应商" min-width="150" align="left" show-overflow-tooltip />
+        <el-table-column prop="real_name" label="收货人" width="120" align="center" />
+        <el-table-column prop="pay_price" label="实际支付" width="120" align="center">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <span style="color: #f56c6c; font-weight: bold;">￥{{ scope.row.pay_price }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="status_name" label="订单状态" width="120" align="center">
           <template #default="scope">
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
-            <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
+            <el-tag :type="scope.row.status === 1 ? 'primary' : scope.row.status === 2 ? 'success' : 'info'" size="small">
+              {{ scope.row.status === 0 ? '待发货' : scope.row.status === 1 ? '待收货' : scope.row.status === 2 ? '已完成' : '已关闭' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="add_time" label="下单时间" min-width="160" align="center" />
+        <el-table-column label="操作" width="150" align="center" fixed="right">
+          <template #default="scope">
+            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">订单详情</el-button>
           </template>
         </el-table-column>
       </el-table>
