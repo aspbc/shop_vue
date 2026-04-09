@@ -1,34 +1,42 @@
 <template>
   <div>
     <el-card>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="关键字">
-          <el-input v-model="searchQuery.keyword" placeholder="请输入关键字搜索" clearable></el-input>
+            <el-form :inline="true" class="demo-form-inline" size="default">
+        <el-form-item label="账号/姓名：">
+          <el-input v-model="searchQuery.keyword" placeholder="请输入管理员账号或姓名" clearable style="width: 200px;"></el-input>
+        </el-form-item>
+        <el-form-item label="状态：">
+          <el-select v-model="searchQuery.status" placeholder="全部" clearable style="width: 150px;">
+            <el-option label="正常" value="1"></el-option>
+            <el-option label="禁用" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchData">搜索</el-button>
-          <el-button @click="resetData">重置</el-button>
+          <el-button type="primary" @click="fetchData">查询</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-bottom: 15px;">
-        <el-button type="primary" plain @click="handleAdd">新增</el-button>
-        <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="warning" plain @click="handleExport">导出数据</el-button>
+            <div style="margin-bottom: 15px;">
+        <el-button type="primary" @click="handleAdd">添加管理员</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column prop="account" label="账号" width="150" align="center" />
+        <el-table-column prop="real_name" label="姓名" width="120" align="center" />
+        <el-table-column prop="roles" label="所属角色" min-width="200" align="left">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(scope.row)" />
+            <el-tag v-for="(role, idx) in scope.row.roles" :key="idx" size="small" style="margin-right: 5px;">{{ role }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column prop="status" label="状态" width="100" align="center">
+          <template #default="scope">
+            <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="last_ip" label="最后登录IP" width="150" align="center" />
+        <el-table-column prop="last_time" label="最后登录时间" width="160" align="center" />
+        <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="primary" link @click="handleDetail(scope.row)">查看详情</el-button>
             <el-button size="small" type="danger" link @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
