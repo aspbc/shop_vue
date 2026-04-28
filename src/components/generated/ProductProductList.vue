@@ -35,12 +35,20 @@
           <el-row :gutter="15">
             <el-col :span="6">
               <el-form-item label="商品搜索" style="width: 100%;">
-                <el-input v-model="searchQuery.keyword" placeholder="商品名称/关键字/ID" clearable />
+                <el-input v-model="searchQuery.store_name" placeholder="商品名称/关键字/ID" clearable class="input-with-select">
+                  <template #prepend>
+                    <el-select v-model="searchQuery.field_key" style="width: 100px;">
+                      <el-option label="全部" value="all" />
+                      <el-option label="商品ID" value="product_id" />
+                      <el-option label="商品名称" value="store_name" />
+                    </el-select>
+                  </template>
+                </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item label="商品分类" style="width: 100%;">
-                <el-select v-model="searchQuery.cateId" placeholder="全部分类" clearable style="width: 100%;">
+                <el-select v-model="searchQuery.cate_id" placeholder="全部分类" clearable style="width: 100%;">
                   <el-option label="手机数码" value="1" />
                   <el-option label="家用电器" value="2" />
                   <el-option label="服装服饰" value="3" />
@@ -49,7 +57,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item label="商品类型" style="width: 100%;">
-                <el-select v-model="searchQuery.type" placeholder="全部" clearable style="width: 100%;">
+                <el-select v-model="searchQuery.productType" placeholder="全部" clearable style="width: 100%;">
                   <el-option label="普通商品" value="0" />
                   <el-option label="卡密" value="1" />
                   <el-option label="虚拟商品" value="3" />
@@ -418,9 +426,10 @@ const handleDetail = (row) => {
 
 const searchQuery = reactive({
   type: 1,
-  keyword: '',
-  cateId: null,
-  type: null,
+  store_name: '',
+  field_key: 'all',
+  cate_id: null,
+  product_type: null,
   priceMin: '',
   priceMax: '',
   salesMin: '',
@@ -438,9 +447,20 @@ const form = reactive({
   image: ''
 })
 
+// 将前端零散状态组装为符合 PHP 接口标准的查询参数
+const buildParams = () => {
+  return {
+    ...searchQuery,
+    price_range: (searchQuery.priceMin || searchQuery.priceMax) ? `${searchQuery.priceMin}-${searchQuery.priceMax}` : '',
+    sales_range: (searchQuery.salesMin || searchQuery.salesMax) ? `${searchQuery.salesMin}-${searchQuery.salesMax}` : ''
+  }
+}
+
+// 请求获取各状态(Tab页签)的统计数据(销售中、回收站等)
+// 传入当前的搜索条件(searchQuery)以保证各个页签的数字在特定搜索场景下依然精确联动
 const fetchHeaderStats = async () => {
   try {
-    const params = { ...searchQuery }
+    const params = buildParams()
     const res = await axios.get('/api/admin/store/product/status_statistics', { params })
     if (res.data.code === 200) {
       headerStats.value = res.data.data
@@ -458,7 +478,7 @@ const handleTabClick = (tab) => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const params = { ...searchQuery }
+    const params = buildParams()
     
     const res = await axios.get('/api/admin/store/product/list', { params })
     if (res.data.code === 200) {
@@ -484,9 +504,10 @@ const fetchData = async () => {
 }
 
 const resetSearch = () => {
-  searchQuery.keyword = ''
-  searchQuery.cateId = null
-  searchQuery.type = null
+  searchQuery.store_name = ''
+  searchQuery.field_key = 'all'
+  searchQuery.cate_id = null
+  searchQuery.product_type = null
   searchQuery.priceMin = ''
   searchQuery.priceMax = ''
   searchQuery.salesMin = ''
