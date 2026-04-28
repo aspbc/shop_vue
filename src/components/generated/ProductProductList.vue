@@ -2,7 +2,7 @@
   <div class="product-list-container">
     <el-card shadow="never" class="table-card">
       <!-- 1. 商品状态多页签 -->
-      <el-tabs v-model="searchQuery.type" @tab-click="handleTabClick" class="status-tabs">
+      <el-tabs :model-value="searchQuery.type" @update:modelValue="handleTabChange" class="status-tabs">
         <el-tab-pane :name="1">
           <template #label>销售中 ({{ headerStats.selling || 0 }})</template>
         </el-tab-pane>
@@ -333,7 +333,7 @@
 
 
 <script setup>
-import { ref, reactive, onMounted, inject } from 'vue'
+import { ref, reactive, onMounted, inject, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, ArrowDown, ArrowUp, Goods } from '@element-plus/icons-vue'
 
@@ -473,16 +473,16 @@ const fetchHeaderStats = async () => {
   }
 }
 
-const handleTabClick = (tab) => {
-  searchQuery.type = Number(searchQuery.type)
+const handleTabChange = async (val) => {
+  searchQuery.type = Number(val)
   searchQuery.page = 1
+  await nextTick()
   fetchData()
 }
 
 const fetchData = async () => {
   loading.value = true
   try {
-    searchQuery.type = Number(searchQuery.type)
     const params = buildParams()
     
     const res = await axios.get('/api/admin/store/product/list', { params })
