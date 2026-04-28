@@ -2,29 +2,29 @@
   <div class="product-list-container">
     <el-card shadow="never" class="table-card">
       <!-- 1. 商品状态多页签 -->
-      <el-tabs v-model="searchQuery.tabStatus" @tab-click="handleTabClick" class="status-tabs">
-        <el-tab-pane name="selling">
+      <el-tabs v-model="searchQuery.type" @tab-click="handleTabClick" class="status-tabs">
+        <el-tab-pane :name="1">
           <template #label>销售中 ({{ headerStats.selling || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="warehouse">
+        <el-tab-pane :name="2">
           <template #label>仓库中 ({{ headerStats.warehouse || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="soldOut">
+        <el-tab-pane :name="4">
           <template #label>已售罄 ({{ headerStats.soldOut || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="alert">
+        <el-tab-pane :name="5">
           <template #label>库存预警 ({{ headerStats.alert || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="recycle">
+        <el-tab-pane :name="6">
           <template #label>回收站 ({{ headerStats.recycle || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="pending">
+        <el-tab-pane :name="0">
           <template #label>待审核 ({{ headerStats.pending || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="rejected">
+        <el-tab-pane :name="-1">
           <template #label>审核未通过 ({{ headerStats.rejected || 0 }})</template>
         </el-tab-pane>
-        <el-tab-pane name="forced">
+        <el-tab-pane :name="-2">
           <template #label>强制下架 ({{ headerStats.forced || 0 }})</template>
         </el-tab-pane>
       </el-tabs>
@@ -97,8 +97,8 @@
         <div class="left-actions">
           <el-button type="primary" @click="handleAdd">发布商品</el-button>
           <el-button type="success" plain>商品采集</el-button>
-          <el-button type="warning" plain v-if="searchQuery.tabStatus === 'warehouse'">批量上架</el-button>
-          <el-button type="warning" plain v-if="searchQuery.tabStatus === 'selling'">批量下架</el-button>
+          <el-button type="warning" plain v-if="searchQuery.type === 2">批量上架</el-button>
+          <el-button type="warning" plain v-if="searchQuery.type === 1">批量下架</el-button>
           <el-button type="info" @click="handleExport" plain>导出数据</el-button>
         </div>
       </div>
@@ -157,7 +157,7 @@
         <el-table-column prop="sales" label="销量" width="80" align="center" />
         <el-table-column prop="stock" label="库存" width="80" align="center" />
         <el-table-column prop="sort" label="排序" width="80" align="center" />
-        <el-table-column label="状态" width="100" align="center" v-if="searchQuery.tabStatus !== 'recycle'">
+        <el-table-column label="状态" width="100" align="center" v-if="searchQuery.type !== 6">
           <template #default="scope">
             <el-switch
               v-model="scope.row.isShow"
@@ -170,7 +170,7 @@
         <el-table-column label="操作" width="280" fixed="right" align="center">
           <template #default="scope">
             <el-button size="small" type="primary" link @click="handleDetail(scope.row)">详情</el-button>
-            <el-button size="small" type="primary" link @click="handleEdit(scope.row)" v-if="searchQuery.tabStatus !== 'recycle'">编辑</el-button>
+            <el-button size="small" type="primary" link @click="handleEdit(scope.row)" v-if="searchQuery.type !== 6">编辑</el-button>
             <el-button size="small" type="primary" link @click="handleStock(scope.row)">库存</el-button>
             <el-dropdown trigger="click" style="margin-left: 12px; vertical-align: middle;">
               <span class="el-dropdown-link" style="color: var(--el-color-primary); font-size: 12px; cursor: pointer; display: inline-flex; align-items: center;">
@@ -411,7 +411,7 @@ const handleDetail = (row) => {
 
 
 const searchQuery = reactive({
-  tabStatus: 'selling',
+  type: 1,
   keyword: '',
   cateId: null,
   type: null,
@@ -434,7 +434,8 @@ const form = reactive({
 
 const fetchHeaderStats = async () => {
   try {
-    const res = await axios.get('/api/admin/store/product/headerStats')
+    const params = { ...searchQuery }
+    const res = await axios.get('/api/admin/store/product/type_header', { params })
     if (res.data.code === 200) {
       headerStats.value = res.data.data
     }
