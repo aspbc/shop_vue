@@ -57,7 +57,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item label="商品类型" style="width: 100%;">
-                <el-select v-model="searchQuery.productType" placeholder="全部" clearable style="width: 100%;">
+                <el-select v-model="searchQuery.product_type" placeholder="全部" clearable style="width: 100%;">
                   <el-option label="普通商品" value="0" />
                   <el-option label="卡密" value="1" />
                   <el-option label="虚拟商品" value="3" />
@@ -666,4 +666,3 @@ onMounted(() => {
   color: #666;
 }
 </style>
-
