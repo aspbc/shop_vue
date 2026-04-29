@@ -265,46 +265,147 @@
       <el-form :model="currentDetail" label-width="100px" style="margin-top: 20px;">
         <el-tabs v-model="detailActiveTab">
           <el-tab-pane label="基础信息" name="basic">
-            <div class="detail-section">
-              <h3 class="detail-title"><span class="title-bar"></span>基础信息</h3>
-              <el-row :gutter="20">
-                <el-col :span="24">
-                  <el-form-item label="商品名称" required>
-                    <el-input v-model="currentDetail.storeName" placeholder="请输入商品名称" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="商品分类" required>
-                    <el-cascader v-model="currentDetail.cateId" :options="categoryOptions" :props="{ checkStrictly: true, value: 'id', label: 'cateName' }" clearable placeholder="请选择商品分类" style="width: 100%" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="商品品牌">
-                    <el-select v-model="currentDetail.brandId" placeholder="请选择品牌" clearable style="width: 100%">
-                      <el-option v-for="b in brandOptions" :key="b.id" :label="b.brandName" :value="b.id" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="商品单位">
-                    <el-input v-model="currentDetail.unitName" placeholder="如：件、个" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="商品编码">
-                    <el-input v-model="currentDetail.code" placeholder="请输入商品编码" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                  <el-form-item label="商品轮播图">
-                    <el-input type="textarea" v-model="currentDetail.sliderImage" :rows="2" placeholder="请输入轮播图URL，多个以逗号分隔" />
-                    <div style="display: flex; gap: 10px; margin-top: 10px;" v-if="currentDetailImages.length">
-                      <el-image v-for="(img, idx) in currentDetailImages" :key="idx" :src="img" style="width: 60px; height: 60px; border-radius: 4px; border: 1px solid #eee;" fit="cover" />
-                    </div>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item label="商品类型" required>
+                  <el-select v-model="currentDetail.productType" placeholder="请选择商品类型" style="width: 100%">
+                    <el-option label="普通商品" :value="0" />
+                    <el-option label="卡密商品" :value="1" />
+                    <el-option label="优惠券" :value="2" />
+                    <el-option label="虚拟商品" :value="3" />
+                    <el-option label="次卡商品" :value="4" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="商品名称" required>
+                  <el-input v-model="currentDetail.storeName" placeholder="请输入商品名称" maxlength="50" show-word-limit>
+                    <template #append>
+                      <el-button type="primary">AI润色</el-button>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="22">
+                <el-form-item label="商品分类" required>
+                  <el-select v-model="currentDetail.cateId" placeholder="请选择商品分类" clearable style="width: 100%">
+                    <el-option v-for="item in flatCategoryOptions" :key="item.id" :label="item.cateName" :value="String(item.id)" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" style="display: flex; align-items: center;">
+                <el-button type="primary" link @click="goCategory">新增分类</el-button>
+              </el-col>
+
+              <el-col :span="22">
+                <el-form-item label="商品品牌">
+                  <el-select v-model="currentDetail.brandId" placeholder="请选择商品品牌" clearable style="width: 100%">
+                    <el-option v-for="b in brandOptions" :key="b.id" :label="b.brandName" :value="b.id" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" style="display: flex; align-items: center;">
+                <el-button type="primary" link @click="goBrand">新增品牌</el-button>
+              </el-col>
+
+              <el-col :span="22">
+                <el-form-item label="单位" required>
+                  <el-select v-model="currentDetail.unitName" placeholder="请输入单位" filterable allow-create default-first-option style="width: 100%">
+                    <el-option v-for="u in unitOptions" :key="u.id" :label="u.name" :value="u.name" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" style="display: flex; align-items: center;">
+                <el-button type="primary" link @click="goUnit">新增单位</el-button>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="商品编码">
+                  <el-input v-model="currentDetail.code" placeholder="请输入商品编码" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="商品轮播图" required>
+                  <UploadImage v-model="currentDetail.image" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="22">
+                <el-form-item label="商品标签">
+                  <el-select v-model="labelIdArr" placeholder="选择商品标签" multiple clearable style="width: 100%">
+                    <el-option v-for="l in labelOptions" :key="l.id" :label="l.labelName" :value="String(l.id)" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" style="display: flex; align-items: center;">
+                <el-button type="primary" link @click="goLabel">新增标签</el-button>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="添加视频">
+                  <el-switch v-model="currentDetail.videoOpen" :active-value="1" :inactive-value="0" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="适用群体">
+                  <el-checkbox-group v-model="audienceArr">
+                    <el-checkbox label="general">零售用户</el-checkbox>
+                    <el-checkbox label="channel">采购商</el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="仅会员可见">
+                  <el-switch v-model="currentDetail.isVip" :active-value="1" :inactive-value="0" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="上架时间">
+                  <el-radio-group v-model="shelfMode" @change="handleShelfModeChange">
+                    <el-radio label="now">立即上架</el-radio>
+                    <el-radio label="timer">定时上架</el-radio>
+                    <el-radio label="warehouse">放入仓库</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-if="shelfMode === 'timer'">
+                <el-form-item label="上架时间">
+                  <el-date-picker v-model="autoOnDate" type="datetime" placeholder="选择上架时间" style="width: 300px" @change="handleAutoOnChange" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="定时下架">
+                  <el-switch v-model="autoOffEnabled" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-if="autoOffEnabled">
+                <el-form-item label="下架时间">
+                  <el-date-picker v-model="autoOffDate" type="datetime" placeholder="选择下架时间" style="width: 300px" @change="handleAutoOffChange" />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="24">
+                <el-form-item label="商品来源">
+                  <el-radio-group v-model="sourceType" @change="handleSourceChange">
+                    <el-radio :label="0">平台自采</el-radio>
+                    <el-radio :label="2">供应商</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" v-if="sourceType === 2">
+                <el-form-item label="供应商" required>
+                  <el-select v-model="currentDetail.relationId" placeholder="请选择供应商" clearable style="width: 100%">
+                    <el-option v-for="s in supplierOptions" :key="s.id" :label="s.name" :value="s.id" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-tab-pane>
             
           <el-tab-pane label="物流设置" name="logistics">
@@ -598,10 +699,13 @@
 
 <script setup>
 import { ref, reactive, onMounted, inject, nextTick, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, ArrowDown, ArrowUp, Goods } from '@element-plus/icons-vue'
+import UploadImage from '../UploadImage.vue'
 
 const axios = inject('axios')
+const router = useRouter()
 const tableData = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -634,6 +738,38 @@ const categoryOptions = ref([])
 const categoryNameMap = ref({})
 const brandNameMap = ref({})
 const brandOptions = ref([])
+const unitOptions = ref([])
+const labelOptions = ref([])
+const supplierOptions = ref([])
+
+const labelIdArr = ref([])
+const audienceArr = ref([])
+const shelfMode = ref('now')
+const autoOnDate = ref(null)
+const autoOffEnabled = ref(false)
+const autoOffDate = ref(null)
+const sourceType = ref(0)
+
+const flatCategoryOptions = computed(() => {
+  const list = []
+  const walk = (arr) => {
+    if (!Array.isArray(arr)) return
+    arr.forEach(item => {
+      if (!item) return
+      list.push(item)
+      if (Array.isArray(item.children) && item.children.length) {
+        walk(item.children)
+      }
+    })
+  }
+  walk(categoryOptions.value)
+  return list.length ? list : (Array.isArray(categoryOptions.value) ? categoryOptions.value : [])
+})
+
+const goCategory = () => router.push('/product_product_classify')
+const goBrand = () => router.push('/product_product_brand')
+const goUnit = () => router.push('/product_unitList')
+const goLabel = () => router.push('/product_label')
 
 const toInt = (v) => {
   const n = Number(v)
@@ -742,10 +878,86 @@ const fetchCategories = async () => {
   }
 }
 
+const fetchUnits = async () => {
+  const res = await axios.get('/api/admin/store/product/unit/list', { params: { page: 1, limit: 1000 } })
+  if (res.data && res.data.code === 200 && res.data.data) {
+    unitOptions.value = res.data.data.records || []
+  }
+}
+
+const fetchLabels = async () => {
+  const res = await axios.get('/api/admin/store/product_label/list', { params: { page: 1, limit: 1000 } })
+  if (res.data && res.data.code === 200 && res.data.data) {
+    labelOptions.value = res.data.data.records || []
+  }
+}
+
+const fetchSuppliers = async () => {
+  const res = await axios.get('/api/admin/supplier/list', { params: { page: 1, limit: 1000 } })
+  if (res.data && res.data.code === 200 && res.data.data) {
+    supplierOptions.value = res.data.data.records || []
+  }
+}
+
+const toDate = (ts) => {
+  const n = Number(ts)
+  if (!Number.isFinite(n) || n <= 0) return null
+  return new Date(n * 1000)
+}
+
+const toTs = (d) => {
+  if (!d) return 0
+  const t = (d instanceof Date) ? d.getTime() : new Date(d).getTime()
+  if (!Number.isFinite(t)) return 0
+  return Math.floor(t / 1000)
+}
+
+const handleShelfModeChange = () => {
+  if (shelfMode.value === 'now') {
+    currentDetail.value.isShow = 1
+    currentDetail.value.autoOnTime = 0
+    autoOnDate.value = null
+  } else if (shelfMode.value === 'warehouse') {
+    currentDetail.value.isShow = 0
+    currentDetail.value.autoOnTime = 0
+    autoOnDate.value = null
+  } else if (shelfMode.value === 'timer') {
+    currentDetail.value.isShow = 0
+  }
+}
+
+const handleAutoOnChange = () => {
+  currentDetail.value.autoOnTime = toTs(autoOnDate.value)
+}
+
+const handleAutoOffChange = () => {
+  currentDetail.value.autoOffTime = toTs(autoOffDate.value)
+}
+
+const handleSourceChange = () => {
+  currentDetail.value.type = Number(sourceType.value)
+  if (sourceType.value !== 2) {
+    currentDetail.value.relationId = 0
+  }
+}
+
 const fetchProductInfo = async (id) => {
   const res = await axios.get(`/api/admin/store/product/info/${id}`)
   if (res.data && res.data.code === 200) {
     currentDetail.value = res.data.data || {}
+    if (currentDetail.value.labelId) {
+      labelIdArr.value = String(currentDetail.value.labelId).split(',').filter(v => v)
+    } else {
+      labelIdArr.value = []
+    }
+    audienceArr.value = []
+    if (Number(currentDetail.value.isGeneralProduct) === 1) audienceArr.value.push('general')
+    if (Number(currentDetail.value.isChannelProduct) === 1) audienceArr.value.push('channel')
+    sourceType.value = Number(currentDetail.value.type ?? 0)
+    shelfMode.value = Number(currentDetail.value.isShow) === 1 ? 'now' : (Number(currentDetail.value.autoOnTime) > 0 ? 'timer' : 'warehouse')
+    autoOnDate.value = toDate(currentDetail.value.autoOnTime)
+    autoOffEnabled.value = Number(currentDetail.value.autoOffTime) > 0
+    autoOffDate.value = toDate(currentDetail.value.autoOffTime)
     if (currentDetail.value.deliveryType) {
       deliveryTypeArr.value = currentDetail.value.deliveryType.split(',').filter(v => v)
     } else {
@@ -907,25 +1119,44 @@ const submitStock = async () => {
 const handleAdd = () => {
   currentDetail.value = {
     id: null,
+    productType: 0,
     storeName: '',
-    cateId: null,
+    cateId: '',
     brandId: null,
     unitName: '',
     code: '',
+    labelId: '',
+    image: '',
     sliderImage: '',
     deliveryType: '',
     ensureId: '',
     freight: 1,
+    postage: 0,
+    tempId: 0,
+    videoOpen: 0,
+    isVip: 0,
+    isGeneralProduct: 1,
+    isChannelProduct: 0,
+    type: 0,
+    relationId: 0,
+    autoOnTime: 0,
+    autoOffTime: 0,
     sales: 0,
     ficti: 0,
     sort: 0,
     giveIntegral: 0,
     description: '',
-    image: '',
     price: 0,
     stock: 0,
     isShow: 1
   }
+  labelIdArr.value = []
+  audienceArr.value = ['general']
+  shelfMode.value = 'now'
+  autoOnDate.value = null
+  autoOffEnabled.value = false
+  autoOffDate.value = null
+  sourceType.value = 0
   deliveryTypeArr.value = []
   ensureIdArr.value = []
   specTableData.value = []
@@ -1033,6 +1264,24 @@ const handleSaveProduct = async () => {
     // Convert arrays back to comma separated strings
     currentDetail.value.deliveryType = deliveryTypeArr.value.join(',')
     currentDetail.value.ensureId = ensureIdArr.value.join(',')
+    currentDetail.value.labelId = labelIdArr.value.join(',')
+    currentDetail.value.isGeneralProduct = audienceArr.value.includes('general') ? 1 : 0
+    currentDetail.value.isChannelProduct = audienceArr.value.includes('channel') ? 1 : 0
+    currentDetail.value.type = Number(sourceType.value)
+    if (currentDetail.value.type !== 2) {
+      currentDetail.value.relationId = 0
+    }
+    if (shelfMode.value === 'now') {
+      currentDetail.value.isShow = 1
+      currentDetail.value.autoOnTime = 0
+    } else if (shelfMode.value === 'warehouse') {
+      currentDetail.value.isShow = 0
+      currentDetail.value.autoOnTime = 0
+    } else if (shelfMode.value === 'timer') {
+      currentDetail.value.isShow = 0
+      currentDetail.value.autoOnTime = toTs(autoOnDate.value)
+    }
+    currentDetail.value.autoOffTime = autoOffEnabled.value ? toTs(autoOffDate.value) : 0
     
     // 1. 保存主商品信息
     const productRes = await axios.post('/api/admin/store/product/save', currentDetail.value)
@@ -1129,6 +1378,9 @@ const handleExport = async () => {
 onMounted(() => {
   fetchCategories()
   fetchBrands()
+  fetchUnits()
+  fetchLabels()
+  fetchSuppliers()
   fetchData()
   fetchHeaderStats()
 })
