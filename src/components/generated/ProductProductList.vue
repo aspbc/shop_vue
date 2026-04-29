@@ -472,16 +472,35 @@
             </div>
 
             <div v-else>
-              <div style="margin-bottom: 12px; display: flex; justify-content: flex-end;">
-                <el-button size="small" @click="batchFillSpec">批量修改</el-button>
-                <el-button size="small" @click="clearSpec">清空</el-button>
-              </div>
+              <el-form-item label="商品规格">
+                <div style="width: 100%;">
+                  <div v-for="(item, idx) in specItems" :key="idx" style="background: #f5f7ff; padding: 16px; border-radius: 6px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <el-input v-model="item.value" placeholder="规格名称" maxlength="30" show-word-limit style="width: 260px;" @change="generateSpecTable" />
+                      <el-checkbox v-model="item.add_pic" @change="generateSpecTable">添加规格图</el-checkbox>
+                      <el-button type="danger" link @click="removeSpecItem(idx)">删除</el-button>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+                      <div v-for="(d, j) in item.detail" :key="j" style="display: flex; align-items: center; gap: 8px;">
+                        <el-input v-model="d.value" placeholder="规格值" maxlength="30" show-word-limit style="width: 180px;" @change="generateSpecTable" />
+                        <el-button type="danger" link @click="removeSpecValue(item, j)">删除</el-button>
+                      </div>
+                      <el-button type="primary" link @click="addSpecValue(item)">添加规格值</el-button>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 10px;">
+                    <el-button @click="addSpecItem">添加新规格</el-button>
+                    <el-button @click="generateSpecTable" :loading="specGenLoading">生成规格</el-button>
+                    <el-button @click="clearSpec">清空</el-button>
+                  </div>
+                </div>
+              </el-form-item>
 
               <el-table :data="specTableData" v-loading="specLoading" border style="width: 100%;">
-                <el-table-column prop="sku" label="规格名称" min-width="180" />
+                <el-table-column v-for="col in specAttrCols" :key="col.slot" :prop="col.slot" :label="col.title" :min-width="col.minWidth || 130" align="center" />
                 <el-table-column label="图片" width="90" align="center">
                   <template #default="scope">
-                    <UploadImage v-model="scope.row.image" />
+                    <UploadImage v-model="scope.row.pic" />
                   </template>
                 </el-table-column>
                 <el-table-column label="售价" width="120" align="center">
@@ -496,7 +515,7 @@
                 </el-table-column>
                 <el-table-column label="划线价" width="120" align="center">
                   <template #default="scope">
-                    <el-input-number v-model="scope.row.otPrice" :precision="2" :controls="false" size="small" style="width: 100%" />
+                    <el-input-number v-model="scope.row.ot_price" :precision="2" :controls="false" size="small" style="width: 100%" />
                   </template>
                 </el-table-column>
                 <el-table-column label="库存" width="120" align="center">
@@ -504,7 +523,7 @@
                     <el-input-number v-model="scope.row.stock" :min="0" :controls="false" size="small" style="width: 100%" />
                   </template>
                 </el-table-column>
-                <el-table-column label="调增库存" width="160" align="center">
+                <el-table-column label="调整库存" width="160" align="center">
                   <template #default="scope">
                     <div style="display: flex; gap: 6px; align-items: center; justify-content: center;">
                       <el-input-number v-model="scope.row.changeStock" :min="0" :controls="false" size="small" style="width: 90px;" />
@@ -522,7 +541,7 @@
                 </el-table-column>
                 <el-table-column label="商品条形码" width="140" align="center">
                   <template #default="scope">
-                    <el-input v-model="scope.row.barCode" size="small" />
+                    <el-input v-model="scope.row.bar_code" size="small" />
                   </template>
                 </el-table-column>
                 <el-table-column label="重量(KG)" width="110" align="center">
@@ -537,12 +556,12 @@
                 </el-table-column>
                 <el-table-column label="默认选中规格" width="120" align="center">
                   <template #default="scope">
-                    <el-switch v-model="scope.row.isDefaultSelect" :active-value="1" :inactive-value="0" />
+                    <el-switch v-model="scope.row.is_default_select" :active-value="1" :inactive-value="0" @change="() => setDefaultSpec(scope.row)" />
                   </template>
                 </el-table-column>
                 <el-table-column label="操作" width="120" fixed="right" align="center">
                   <template #default="scope">
-                    <el-switch v-model="scope.row.isShow" :active-value="1" :inactive-value="0" active-text="显示" inactive-text="隐藏" />
+                    <el-switch v-model="scope.row.is_show" :active-value="1" :inactive-value="0" active-text="显示" inactive-text="隐藏" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -906,6 +925,21 @@ const parseImages = (sliderImage, image) => {
 
 const currentDetailImages = computed(() => parseImages(currentDetail.value.sliderImage, currentDetail.value.image))
 
+const specItems = ref([])
+const specHeader = ref([])
+const specGenLoading = ref(false)
+const specAttrCols = computed(() => {
+  return (specHeader.value || []).filter(c => String(c.slot || '').startsWith('value'))
+})
+
+const applySpecValueList = (list) => {
+  specTableData.value = (Array.isArray(list) ? list : []).map(it => ({
+    changeStock: 0,
+    changeType: 'add',
+    ...it
+  }))
+}
+
 const specTableData = ref([])
 const specLoading = ref(false)
 const specTotal = ref(0)
@@ -972,6 +1006,15 @@ const toTs = (d) => {
 
 const handleSpecTypeChange = () => {
   currentDetail.value.specType = Number(currentDetail.value.specType)
+  if (Number(currentDetail.value.specType) === 1) {
+    if (!specItems.value.length) {
+      specItems.value = [{ value: '', detail: [], add_pic: false }]
+    }
+  } else {
+    specItems.value = []
+    specHeader.value = []
+    specTableData.value = []
+  }
 }
 
 const batchFillSpec = () => {
@@ -981,17 +1024,72 @@ const batchFillSpec = () => {
     if (idx === 0) return
     if (row.price == null) row.price = base.price
     if (row.cost == null) row.cost = base.cost
-    if (row.otPrice == null) row.otPrice = base.otPrice
+    if (row.ot_price == null) row.ot_price = base.ot_price
     if (row.stock == null) row.stock = base.stock
-    if (!row.image) row.image = base.image
-    if (!row.barCode) row.barCode = base.barCode
+    if (!row.pic) row.pic = base.pic
+    if (!row.bar_code) row.bar_code = base.bar_code
+    if (!row.code) row.code = base.code
     if (row.weight == null) row.weight = base.weight
     if (row.volume == null) row.volume = base.volume
   })
 }
 
 const clearSpec = () => {
+  specItems.value = []
+  specHeader.value = []
   specTableData.value = []
+}
+
+const addSpecItem = () => {
+  specItems.value.push({ value: '', detail: [], add_pic: false })
+}
+
+const removeSpecItem = (idx) => {
+  specItems.value.splice(idx, 1)
+  generateSpecTable()
+}
+
+const addSpecValue = (item) => {
+  if (!item.detail) item.detail = []
+  item.detail.push({ value: '', pic: '' })
+}
+
+const removeSpecValue = (item, idx) => {
+  if (!item.detail) return
+  item.detail.splice(idx, 1)
+  generateSpecTable()
+}
+
+const setDefaultSpec = (row) => {
+  if (!row || row.is_default_select !== 1) return
+  specTableData.value.forEach(it => {
+    if (it !== row) it.is_default_select = 0
+  })
+}
+
+const generateSpecTable = async () => {
+  if (Number(currentDetail.value.specType) !== 1) return
+  specGenLoading.value = true
+  try {
+    const productId = currentDetail.value.id || 0
+    const res = await axios.post(`/api/admin/store/product/generate_attr/${productId}/0`, {
+      attrs: specItems.value,
+      items: specTableData.value,
+      product_type: currentDetail.value.productType || 0
+    })
+    if (res.data && res.data.code === 200 && res.data.data && res.data.data.info) {
+      const info = res.data.data.info
+      specItems.value = info.attr || []
+      specHeader.value = info.header || []
+      applySpecValueList(info.value || [])
+    } else {
+      ElMessage.error(res.data.msg || '生成规格失败')
+    }
+  } catch (e) {
+    ElMessage.error('生成规格失败')
+  } finally {
+    specGenLoading.value = false
+  }
 }
 
 const handleShelfModeChange = () => {
@@ -1057,16 +1155,13 @@ const fetchSpecList = async () => {
   if (!currentDetail.value || !currentDetail.value.id) return
   specLoading.value = true
   try {
-    const res = await axios.get('/api/admin/store/product/attr_value/list', {
-      params: { product_id: currentDetail.value.id, page: specPage.value, limit: specLimit.value }
-    })
-    if (res.data && res.data.code === 200 && res.data.data) {
-      specTableData.value = (res.data.data.records || []).map(it => ({
-        changeStock: 0,
-        changeType: 'add',
-        ...it
-      }))
-      specTotal.value = res.data.data.total || specTableData.value.length
+    const res = await axios.get(`/api/admin/store/product/attrs/${currentDetail.value.id}`, { params: { type: 0 } })
+    if (res.data && res.data.code === 200 && res.data.data && res.data.data.info) {
+      const info = res.data.data.info
+      specItems.value = info.attr || []
+      specHeader.value = info.header || []
+      applySpecValueList(info.value || [])
+      specTotal.value = specTableData.value.length
     } else {
       specTableData.value = []
       specTotal.value = 0
@@ -1247,6 +1342,8 @@ const handleAdd = () => {
   sourceType.value = 0
   deliveryTypeArr.value = []
   ensureIdArr.value = []
+  specItems.value = []
+  specHeader.value = []
   specTableData.value = []
   replyTableData.value = []
   detailActiveTab.value = 'basic'
@@ -1388,14 +1485,25 @@ const handleSaveProduct = async () => {
       })
     }
     
-    // 3. 保存规格库存 (若有修改)
-    if (specTableData.value && specTableData.value.length > 0) {
-      const specPayload = specTableData.value.map(item => ({
+    // 3. 保存规格库存
+    if (Number(currentDetail.value.specType) === 1) {
+      const specPayload = (specTableData.value || []).map(item => ({
         ...item,
-        productId,
         stock: item.changeStock && item.changeStock > 0
           ? (item.changeType === 'sub' ? Math.max(0, Number(item.stock) - Number(item.changeStock)) : Number(item.stock) + Number(item.changeStock))
           : item.stock
+      }))
+      await axios.post('/api/admin/store/product/specs/save', {
+        productId,
+        productType: currentDetail.value.productType || 0,
+        type: 0,
+        items: specItems.value,
+        attrs: specPayload
+      })
+    } else if (specTableData.value && specTableData.value.length > 0) {
+      const specPayload = specTableData.value.map(item => ({
+        ...item,
+        productId
       }))
       await axios.post('/api/admin/store/product/attr_value/save', specPayload)
     }
