@@ -434,60 +434,118 @@
           </el-tab-pane>
           
           <el-tab-pane label="规格库存" name="spec">
-            <el-table :data="specTableData" v-loading="specLoading" border style="width: 100%;">
-              <el-table-column prop="sku" label="规格名称" min-width="120" />
-              <el-table-column label="图片" width="100" align="center">
-                <template #default="scope">
-                  <el-input v-model="scope.row.image" placeholder="URL" size="small" />
-                </template>
-              </el-table-column>
-              <el-table-column label="售价" width="110" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.price" :precision="2" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-              <el-table-column label="成本价" width="110" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.cost" :precision="2" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-              <el-table-column label="结算价" width="110" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.settlePrice" :precision="2" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-              <el-table-column label="划线价" width="110" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.otPrice" :precision="2" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-              <el-table-column label="库存" width="110" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.stock" :min="0" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-              <el-table-column label="商品编码" width="120" align="center">
-                <template #default="scope">
-                  <el-input v-model="scope.row.sku" size="small" />
-                </template>
-              </el-table-column>
-              <el-table-column label="重量(KG)" width="100" align="center">
-                <template #default="scope">
-                  <el-input-number v-model="scope.row.weight" :precision="2" :controls="false" size="small" style="width: 100%" />
-                </template>
-              </el-table-column>
-            </el-table>
-            <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-              <el-pagination
-                background
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="specTotal"
-                :page-sizes="[10, 20, 50, 100]"
-                v-model:current-page="specPage"
-                v-model:page-size="specLimit"
-                @current-change="fetchSpecList"
-                @size-change="fetchSpecList"
-              />
+            <el-form-item label="商品规格">
+              <el-radio-group v-model="currentDetail.specType" @change="handleSpecTypeChange">
+                <el-radio :label="0">单规格</el-radio>
+                <el-radio :label="1">多规格</el-radio>
+              </el-radio-group>
+            </el-form-item>
+
+            <div v-if="Number(currentDetail.specType) === 0" style="max-width: 520px;">
+              <el-form-item label="图片" required>
+                <UploadImage v-model="currentDetail.image" />
+              </el-form-item>
+              <el-form-item label="售价" required>
+                <el-input-number v-model="currentDetail.price" :precision="2" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+              <el-form-item label="成本价">
+                <el-input-number v-model="currentDetail.cost" :precision="2" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+              <el-form-item label="划线价">
+                <el-input-number v-model="currentDetail.otPrice" :precision="2" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+              <el-form-item label="库存" required>
+                <el-input-number v-model="currentDetail.stock" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+              <el-form-item label="商品编码">
+                <el-input v-model="currentDetail.code" placeholder="请输入商品编码" />
+              </el-form-item>
+              <el-form-item label="商品条形码">
+                <el-input v-model="currentDetail.barCode" placeholder="请输入商品条形码" />
+              </el-form-item>
+              <el-form-item label="重量(KG)">
+                <el-input-number v-model="currentDetail.weight" :precision="2" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+              <el-form-item label="体积(m³)">
+                <el-input-number v-model="currentDetail.volume" :precision="2" :min="0" :controls="false" style="width: 100%" />
+              </el-form-item>
+            </div>
+
+            <div v-else>
+              <div style="margin-bottom: 12px; display: flex; justify-content: flex-end;">
+                <el-button size="small" @click="batchFillSpec">批量修改</el-button>
+                <el-button size="small" @click="clearSpec">清空</el-button>
+              </div>
+
+              <el-table :data="specTableData" v-loading="specLoading" border style="width: 100%;">
+                <el-table-column prop="sku" label="规格名称" min-width="180" />
+                <el-table-column label="图片" width="90" align="center">
+                  <template #default="scope">
+                    <UploadImage v-model="scope.row.image" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="售价" width="120" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.price" :precision="2" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="成本价" width="120" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.cost" :precision="2" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="划线价" width="120" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.otPrice" :precision="2" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="库存" width="120" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.stock" :min="0" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="调增库存" width="160" align="center">
+                  <template #default="scope">
+                    <div style="display: flex; gap: 6px; align-items: center; justify-content: center;">
+                      <el-input-number v-model="scope.row.changeStock" :min="0" :controls="false" size="small" style="width: 90px;" />
+                      <el-select v-model="scope.row.changeType" size="small" style="width: 80px;">
+                        <el-option label="入库" value="add" />
+                        <el-option label="出库" value="sub" />
+                      </el-select>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="商品编码" width="130" align="center">
+                  <template #default="scope">
+                    <el-input v-model="scope.row.code" size="small" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="商品条形码" width="140" align="center">
+                  <template #default="scope">
+                    <el-input v-model="scope.row.barCode" size="small" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="重量(KG)" width="110" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.weight" :precision="2" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="体积(m³)" width="110" align="center">
+                  <template #default="scope">
+                    <el-input-number v-model="scope.row.volume" :precision="2" :controls="false" size="small" style="width: 100%" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="默认选中规格" width="120" align="center">
+                  <template #default="scope">
+                    <el-switch v-model="scope.row.isDefaultSelect" :active-value="1" :inactive-value="0" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="120" fixed="right" align="center">
+                  <template #default="scope">
+                    <el-switch v-model="scope.row.isShow" :active-value="1" :inactive-value="0" active-text="显示" inactive-text="隐藏" />
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
           </el-tab-pane>
           
@@ -912,6 +970,30 @@ const toTs = (d) => {
   return Math.floor(t / 1000)
 }
 
+const handleSpecTypeChange = () => {
+  currentDetail.value.specType = Number(currentDetail.value.specType)
+}
+
+const batchFillSpec = () => {
+  if (!specTableData.value || !specTableData.value.length) return
+  const base = specTableData.value[0] || {}
+  specTableData.value.forEach((row, idx) => {
+    if (idx === 0) return
+    if (row.price == null) row.price = base.price
+    if (row.cost == null) row.cost = base.cost
+    if (row.otPrice == null) row.otPrice = base.otPrice
+    if (row.stock == null) row.stock = base.stock
+    if (!row.image) row.image = base.image
+    if (!row.barCode) row.barCode = base.barCode
+    if (row.weight == null) row.weight = base.weight
+    if (row.volume == null) row.volume = base.volume
+  })
+}
+
+const clearSpec = () => {
+  specTableData.value = []
+}
+
 const handleShelfModeChange = () => {
   if (shelfMode.value === 'now') {
     currentDetail.value.isShow = 1
@@ -979,7 +1061,11 @@ const fetchSpecList = async () => {
       params: { product_id: currentDetail.value.id, page: specPage.value, limit: specLimit.value }
     })
     if (res.data && res.data.code === 200 && res.data.data) {
-      specTableData.value = res.data.data.records || []
+      specTableData.value = (res.data.data.records || []).map(it => ({
+        changeStock: 0,
+        changeType: 'add',
+        ...it
+      }))
       specTotal.value = res.data.data.total || specTableData.value.length
     } else {
       specTableData.value = []
@@ -1148,6 +1234,8 @@ const handleAdd = () => {
     description: '',
     price: 0,
     stock: 0,
+    weight: 0,
+    volume: 0,
     isShow: 1
   }
   labelIdArr.value = []
@@ -1304,7 +1392,10 @@ const handleSaveProduct = async () => {
     if (specTableData.value && specTableData.value.length > 0) {
       const specPayload = specTableData.value.map(item => ({
         ...item,
-        productId
+        productId,
+        stock: item.changeStock && item.changeStock > 0
+          ? (item.changeType === 'sub' ? Math.max(0, Number(item.stock) - Number(item.changeStock)) : Number(item.stock) + Number(item.changeStock))
+          : item.stock
       }))
       await axios.post('/api/admin/store/product/attr_value/save', specPayload)
     }
