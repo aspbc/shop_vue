@@ -305,26 +305,31 @@
                 </el-col>
               </el-row>
             </div>
+          </el-tab-pane>
             
-            <div class="detail-section" style="margin-top: 30px;">
-              <h3 class="detail-title"><span class="title-bar"></span>物流设置</h3>
-              <el-row :gutter="20">
-                <el-col :span="12">
-                  <el-form-item label="配送方式">
-                    <el-input v-model="currentDetail.deliveryType" placeholder="如：快递" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="运费设置">
-                    <el-radio-group v-model="currentDetail.freight">
-                      <el-radio :label="1">固定运费</el-radio>
-                      <el-radio :label="2">运费模板</el-radio>
-                      <el-radio :label="3">包邮</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
+          <el-tab-pane label="物流设置" name="logistics">
+            <el-form-item label="配送方式" required>
+              <el-checkbox-group v-model="deliveryTypeArr">
+                <el-checkbox label="1">快递</el-checkbox>
+                <el-checkbox label="2">自提</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="运费设置" required>
+              <el-radio-group v-model="currentDetail.freight">
+                <el-radio :label="3">包邮</el-radio>
+                <el-radio :label="1">固定邮费</el-radio>
+                <el-radio :label="2">运费模板</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="邮费" v-if="currentDetail.freight === 1">
+              <el-input-number v-model="currentDetail.postage" :precision="2" :min="0" :controls="false" style="width: 200px" />
+            </el-form-item>
+            <el-form-item label="运费模板" v-if="currentDetail.freight === 2">
+              <el-select v-model="currentDetail.tempId" placeholder="请选择运费模板" style="width: 200px">
+                <!-- 预留运费模板下拉数据选项 -->
+                <el-option label="默认模板" :value="1" />
+              </el-select>
+            </el-form-item>
           </el-tab-pane>
           
           <el-tab-pane label="规格库存" name="spec">
@@ -391,9 +396,118 @@
             </el-form-item>
           </el-tab-pane>
           
+          <el-tab-pane label="佣金/会员价" name="commission">
+            <el-form-item label="是否参与">
+              <el-radio-group v-model="currentDetail.isBrokerage">
+                <el-radio :label="0">不参与返佣</el-radio>
+                <el-radio :label="1">参与返佣</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="返佣设置" v-if="currentDetail.isBrokerage === 1">
+              <el-radio-group v-model="currentDetail.brokerageType">
+                <el-radio :label="1">默认比例</el-radio>
+                <el-radio :label="2">自定义佣金</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="付费会员">
+              <el-switch v-model="currentDetail.isVipProduct" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+            <el-form-item label="等级会员">
+              <el-radio-group v-model="currentDetail.levelType">
+                <el-radio :label="1">默认价格</el-radio>
+                <el-radio :label="2">自定义</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <!-- 预留返佣/会员价格表格位置，此处简单展示一个占位表格 -->
+            <el-table :data="specTableData" v-if="currentDetail.isBrokerage === 1 || currentDetail.levelType === 2" border style="width: 100%; margin-top: 15px;">
+              <el-table-column prop="sku" label="产品规格" min-width="120" />
+              <el-table-column prop="price" label="售价" width="100" align="center" />
+              <el-table-column label="一级返佣" width="100" align="center" v-if="currentDetail.isBrokerage === 1 && currentDetail.brokerageType === 2">
+                <template #default>3%</template>
+              </el-table-column>
+              <el-table-column label="二级返佣" width="100" align="center" v-if="currentDetail.isBrokerage === 1 && currentDetail.brokerageType === 2">
+                <template #default>2%</template>
+              </el-table-column>
+              <el-table-column label="青铜会员" width="100" align="center" v-if="currentDetail.levelType === 2">
+                <template #default>100%</template>
+              </el-table-column>
+              <el-table-column label="白银会员" width="100" align="center" v-if="currentDetail.levelType === 2">
+                <template #default>95%</template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+
+          <el-tab-pane label="营销设置" name="marketing">
+            <el-form-item label="服务保障">
+              <el-checkbox-group v-model="ensureIdArr">
+                <el-checkbox label="1">7天无理由退货</el-checkbox>
+                <el-checkbox label="2">退换货运费险</el-checkbox>
+                <el-checkbox label="3">店铺发货&售后</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="起购数量">
+              <el-input-number v-model="currentDetail.minQty" :min="0" :controls="false" style="width: 200px" />
+              <span style="margin-left: 10px; color: #999;">件/人</span>
+            </el-form-item>
+            <el-form-item label="是否限购">
+              <el-switch v-model="currentDetail.isLimit" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+            <div v-if="currentDetail.isLimit === 1" style="background: #f8f8f8; padding: 15px; margin-bottom: 15px;">
+              <el-form-item label="限购类型">
+                <el-radio-group v-model="currentDetail.limitType">
+                  <el-radio :label="1">单次限购</el-radio>
+                  <el-radio :label="2">永久限购</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="限购数量">
+                <el-input-number v-model="currentDetail.limitNum" :min="0" :controls="false" style="width: 200px" />
+              </el-form-item>
+            </div>
+            <el-form-item label="预售商品">
+              <el-switch v-model="currentDetail.isPresaleProduct" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+            <el-form-item label="优品推荐">
+              <el-switch v-model="currentDetail.isGood" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+            <el-form-item label="支持送礼">
+              <el-switch v-model="currentDetail.isSendGift" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+          </el-tab-pane>
+
           <el-tab-pane label="其他设置" name="other">
-            <div class="detail-section">
-              <h3 class="detail-title"><span class="title-bar"></span>营销设置</h3>
+            <el-form-item label="商品关键字">
+              <el-input v-model="currentDetail.keyword" placeholder="多个关键字用逗号分隔" />
+            </el-form-item>
+            <el-form-item label="商品简介">
+              <el-input type="textarea" v-model="currentDetail.storeInfo" :rows="3" placeholder="请输入商品简介" />
+            </el-form-item>
+            <el-form-item label="分销文案">
+              <el-input type="textarea" v-model="currentDetail.shareContent" :rows="3" placeholder="请输入分销文案" />
+            </el-form-item>
+            <el-form-item label="商品口令">
+              <el-input v-model="currentDetail.commandWord" placeholder="请输入商品口令" />
+            </el-form-item>
+            <el-form-item label="商品推荐图">
+              <el-input type="textarea" v-model="currentDetail.recommendImage" :rows="2" placeholder="请输入推荐图URL" />
+              <div style="margin-top: 10px;" v-if="currentDetail.recommendImage">
+                <el-image :src="currentDetail.recommendImage" style="width: 100px; height: 40px; border-radius: 4px;" fit="cover" />
+              </div>
+            </el-form-item>
+            <el-form-item label="商品参数">
+              <el-button type="primary" size="small" plain style="margin-bottom: 10px;">添加参数</el-button>
+              <el-table :data="[]" border style="width: 100%;">
+                <el-table-column label="参数名称" width="150"></el-table-column>
+                <el-table-column label="参数值"></el-table-column>
+                <el-table-column label="操作" width="80" align="center"></el-table-column>
+              </el-table>
+            </el-form-item>
+            <el-form-item label="自定义留言">
+              <el-switch v-model="currentDetail.customFormOpen" />
+            </el-form-item>
+            
+            <!-- 原有的排序等独立为块或融入 -->
+            <div class="detail-section" style="margin-top: 20px;">
+              <h3 class="detail-title"><span class="title-bar"></span>统计排序</h3>
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-form-item label="已售数量">
@@ -632,6 +746,16 @@ const fetchProductInfo = async (id) => {
   const res = await axios.get(`/api/admin/store/product/info/${id}`)
   if (res.data && res.data.code === 200) {
     currentDetail.value = res.data.data || {}
+    if (currentDetail.value.deliveryType) {
+      deliveryTypeArr.value = currentDetail.value.deliveryType.split(',').filter(v => v)
+    } else {
+      deliveryTypeArr.value = []
+    }
+    if (currentDetail.value.ensureId) {
+      ensureIdArr.value = currentDetail.value.ensureId.split(',').filter(v => v)
+    } else {
+      ensureIdArr.value = []
+    }
   }
 }
 
@@ -790,6 +914,7 @@ const handleAdd = () => {
     code: '',
     sliderImage: '',
     deliveryType: '',
+    ensureId: '',
     freight: 1,
     sales: 0,
     ficti: 0,
@@ -801,6 +926,8 @@ const handleAdd = () => {
     stock: 0,
     isShow: 1
   }
+  deliveryTypeArr.value = []
+  ensureIdArr.value = []
   specTableData.value = []
   replyTableData.value = []
   detailActiveTab.value = 'basic'
@@ -896,9 +1023,16 @@ const fetchData = async () => {
   }
 }
 
+const deliveryTypeArr = ref([])
+const ensureIdArr = ref([])
+
 const handleSaveProduct = async () => {
   try {
     const isEdit = !!currentDetail.value.id
+    
+    // Convert arrays back to comma separated strings
+    currentDetail.value.deliveryType = deliveryTypeArr.value.join(',')
+    currentDetail.value.ensureId = ensureIdArr.value.join(',')
     
     // 1. 保存主商品信息
     const productRes = await axios.post('/api/admin/store/product/save', currentDetail.value)
