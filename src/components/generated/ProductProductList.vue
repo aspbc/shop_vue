@@ -49,9 +49,7 @@
             <el-col :span="4">
               <el-form-item label="商品分类" style="width: 100%;">
                 <el-select v-model="searchQuery.cate_id" placeholder="全部分类" clearable style="width: 100%;">
-                  <el-option label="手机数码" value="1" />
-                  <el-option label="家用电器" value="2" />
-                  <el-option label="服装服饰" value="3" />
+                  <el-option v-for="item in categoryOptions" :key="item.id" :label="item.cateName" :value="item.id" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -115,8 +113,16 @@
       <el-table :data="tableData" style="width: 100%" v-loading="loading" @selection-change="handleSelectionChange">
         <el-table-column type="expand" width="30">
           <template #default="props">
-            <div style="padding: 10px 20px; background-color: #fafafa; border-radius: 4px;">
-              <p>暂无更多规格详情展示。</p>
+            <div style="padding: 14px 20px; background-color: #fafafa; border-radius: 4px;">
+              <el-row :gutter="20">
+                <el-col :span="8">商品分类：{{ getCateNames(props.row.cateId) || '-' }}</el-col>
+                <el-col :span="8">商品市场价格：{{ formatMoney(props.row.otPrice) }}</el-col>
+                <el-col :span="8">成本价：{{ formatMoney(props.row.cost) }}</el-col>
+              </el-row>
+              <el-row :gutter="20" style="margin-top: 10px;">
+                <el-col :span="8">收藏：{{ toInt(props.row.collect) }}</el-col>
+                <el-col :span="8">虚拟销量：{{ toInt(props.row.ficti) }}</el-col>
+              </el-row>
             </div>
           </template>
         </el-table-column>
@@ -147,19 +153,19 @@
         </el-table-column>
         <el-table-column label="商品名称" min-width="250" show-overflow-tooltip>
           <template #default="scope">
-            <span style="color: #409EFF; margin-right: 4px;">【单规格】</span>
-            <span>{{ scope.row.storeName }}</span>
+            <span style="color: #409EFF; margin-right: 4px;">【{{ getSpecTypeName(scope.row.specType) }}】</span>
+            <span style="color: #409EFF;">{{ scope.row.storeName }}</span>
           </template>
         </el-table-column>
         <el-table-column label="商品来源" width="100" align="center">
-          <template #default>平台</template>
+          <template #default="scope">{{ getSourceName(scope.row.type) }}</template>
         </el-table-column>
         <el-table-column label="商品类型" width="100" align="center">
-          <template #default>普通商品</template>
+          <template #default="scope">{{ getProductTypeName(scope.row.productType) }}</template>
         </el-table-column>
         <el-table-column prop="price" label="商品售价" width="100" align="center">
           <template #default="scope">
-            <span>{{ scope.row.price || '0.00' }}</span>
+            <span>{{ formatMoney(scope.row.price) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="sales" label="销量" width="80" align="center" />
@@ -284,7 +290,7 @@
     <el-drawer title="商品详情" v-model="detailDrawerVisible" size="60%">
       <div class="drawer-header-info">
         <el-icon color="var(--el-color-primary)" size="24"><Goods /></el-icon>
-        <span style="margin-left: 10px; font-weight: bold;">商品ID: {{ currentDetail.id }}</span>
+        <span style="margin-left: 10px; font-weight: bold;">{{ currentDetail.storeName }}（商品ID：{{ currentDetail.id }}）</span>
       </div>
       <el-tabs v-model="detailActiveTab" style="margin-top: 20px;">
         <el-tab-pane label="基础信息" name="basic">
@@ -292,16 +298,16 @@
             <h3 class="detail-title"><span class="title-bar"></span>基础信息</h3>
             <el-row :gutter="20" class="detail-row">
               <el-col :span="24" class="detail-item"><span class="detail-label">商品名称：</span>{{ currentDetail.storeName }}</el-col>
-              <el-col :span="8" class="detail-item"><span class="detail-label">商品分类：</span>{{ currentDetail.cateName || '-' }}</el-col>
-              <el-col :span="8" class="detail-item"><span class="detail-label">商品品牌：</span>{{ currentDetail.brandName || '-' }}</el-col>
+              <el-col :span="8" class="detail-item"><span class="detail-label">商品分类：</span>{{ getCateNames(currentDetail.cateId) || '-' }}</el-col>
+              <el-col :span="8" class="detail-item"><span class="detail-label">商品品牌：</span>{{ getBrandName(currentDetail.brandId) }}</el-col>
               <el-col :span="8" class="detail-item"><span class="detail-label">商品单位：</span>{{ currentDetail.unitName || '-' }}</el-col>
-              <el-col :span="8" class="detail-item"><span class="detail-label">商品标签：</span>{{ currentDetail.labelName || '-' }}</el-col>
+              <el-col :span="8" class="detail-item"><span class="detail-label">商品标签：</span>-</el-col>
               <el-col :span="8" class="detail-item"><span class="detail-label">商品编码：</span>{{ currentDetail.code || '-' }}</el-col>
             </el-row>
             <div style="margin-top: 15px;" class="detail-item">
               <span class="detail-label">商品轮播图：</span>
               <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <el-image v-for="(img, idx) in (currentDetail.sliderImage || [currentDetail.image])" :key="idx" :src="img" style="width: 60px; height: 60px; border-radius: 4px; border: 1px solid #eee;" fit="cover" />
+                <el-image v-for="(img, idx) in currentDetailImages" :key="idx" :src="img" style="width: 60px; height: 60px; border-radius: 4px; border: 1px solid #eee;" fit="cover" />
               </div>
             </div>
           </div>
@@ -333,7 +339,7 @@
 
 
 <script setup>
-import { ref, reactive, onMounted, inject, nextTick } from 'vue'
+import { ref, reactive, onMounted, inject, nextTick, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, ArrowDown, ArrowUp, Goods } from '@element-plus/icons-vue'
 
@@ -357,9 +363,113 @@ const headerStats = ref({
   forced: 0
 })
 
+const detailDrawerVisible = ref(false)
+const detailActiveTab = ref('basic')
+const currentDetail = ref({})
+
 const selectedCount = ref(0)
 const handleSelectionChange = (val) => {
   selectedCount.value = val.length
+}
+
+const categoryOptions = ref([])
+const categoryNameMap = ref({})
+const brandNameMap = ref({})
+
+const toInt = (v) => {
+  const n = Number(v)
+  return Number.isFinite(n) ? Math.trunc(n) : 0
+}
+
+const formatMoney = (v) => {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return '0.00'
+  return n.toFixed(2)
+}
+
+const getSourceName = (v) => {
+  const t = Number(v)
+  if (t === 1) return '门店'
+  if (t === 2) return '供应商'
+  return '平台'
+}
+
+const getProductTypeName = (v) => {
+  const t = Number(v)
+  if (t === 1) return '卡密商品'
+  if (t === 2) return '优惠券'
+  if (t === 3) return '虚拟商品'
+  if (t === 4) return '次卡商品'
+  return '普通商品'
+}
+
+const getSpecTypeName = (v) => {
+  const t = Number(v)
+  return t === 1 ? '多规格' : '单规格'
+}
+
+const getCateNames = (cateIdStr) => {
+  if (!cateIdStr) return ''
+  const raw = String(cateIdStr).trim()
+  if (!raw) return ''
+  const ids = raw.split(',').map(s => s.trim()).filter(Boolean)
+  const names = ids.map(id => categoryNameMap.value[id]).filter(Boolean)
+  return names.join(',')
+}
+
+const getBrandName = (brandId) => {
+  if (!brandId && brandId !== 0) return '-'
+  return brandNameMap.value[String(brandId)] || '-'
+}
+
+const parseImages = (sliderImage, image) => {
+  const list = []
+  if (sliderImage) {
+    const raw = String(sliderImage).trim()
+    if (raw.startsWith('[')) {
+      try {
+        const arr = JSON.parse(raw)
+        if (Array.isArray(arr)) {
+          arr.forEach(it => {
+            if (it) list.push(String(it))
+          })
+        }
+      } catch (e) {}
+    } else {
+      raw.split(',').map(s => s.trim()).filter(Boolean).forEach(it => list.push(it))
+    }
+  }
+  if (!list.length && image) list.push(image)
+  return list
+}
+
+const currentDetailImages = computed(() => parseImages(currentDetail.value.sliderImage, currentDetail.value.image))
+
+const fetchCategories = async () => {
+  const res = await axios.get('/api/admin/store/productCategory/list', { params: { isShow: 1 } })
+  if (res.data && res.data.code === 200) {
+    categoryOptions.value = res.data.data || []
+    const map = {}
+    categoryOptions.value.forEach(item => {
+      if (item && item.id != null) {
+        map[String(item.id)] = item.cateName
+      }
+    })
+    categoryNameMap.value = map
+  }
+}
+
+const fetchBrands = async () => {
+  const res = await axios.get('/api/admin/store/product/brand/list', { params: { page: 1, limit: 1000 } })
+  if (res.data && res.data.code === 200 && res.data.data && Array.isArray(res.data.data.records)) {
+    const map = {}
+    res.data.data.records.forEach(item => {
+      if (item && item.id != null) {
+        map[String(item.id)] = item.brandName
+      }
+    })
+    brandNameMap.value = map
+  }
 }
 
 
@@ -412,10 +522,6 @@ const submitStock = async () => {
     ElMessage.error('网络错误')
   }
 }
-
-const detailDrawerVisible = ref(false)
-const detailActiveTab = ref('basic')
-const currentDetail = ref({})
 
 const handleDetail = (row) => {
   currentDetail.value = { ...row }
@@ -599,6 +705,8 @@ const submitForm = async () => {
 }
 
 onMounted(() => {
+  fetchCategories()
+  fetchBrands()
   fetchData()
   fetchHeaderStats()
 })
